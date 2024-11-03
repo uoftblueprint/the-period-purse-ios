@@ -6,6 +6,8 @@ The Period Purse strives to achieve menstrual equity by providing people who men
 
 **M.Nation has been launched on the iOS App Store, and you can download it [here](https://apps.apple.com/app/id1621201647).**
 
+You can also find the M. Nation Android repo [here](https://github.com/uoftblueprint/the-period-purse-android?tab=readme-ov-file).
+
 ## For Developers
 
 The [wiki](https://github.com/uoftblueprint/the-period-purse/wiki) has a lot of relevant information related to branching, PRs, etc that you should review!
