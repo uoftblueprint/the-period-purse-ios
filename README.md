@@ -69,4 +69,5 @@ Please check out the [wiki](https://github.com/uoftblueprint/the-period-purse/wi
 
 This project would not be possible without the combined efforts of the TPP Blueprint team (2024-2025):
 
-[Merrick Liu](https://github.com/merrickliu888), [Paridhi Goel](https://github.com/paridhi26), [Patricia Santos](https://github.com/santoaast), [Helen Zhao](https://github.com/1zhaohel)
+[Merrick Liu](https://github.com/merrickliu888), [Paridhi Goel](https://github.com/paridhi26), [Patricia Santos](https://github.com/santoaast), [Helen Zhao](https://github.com/1zhaohel), [Mark Oh](https://github.com/marko0124)
+
