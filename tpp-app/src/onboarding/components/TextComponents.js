@@ -14,7 +14,7 @@ export const BodyText = styled.Text`
   textalign: center;
   fontfamily: System;
   fontsize: 16px;
-  fontweight: 400;
+  fontweight: "400";
   color: #000000;
   padding-top: 10px;
 `;
