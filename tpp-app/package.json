@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "ios": "npx expo run:ios"
+    "ios": "npx expo run:ios",
+    "android": "npx expo run:android"
   },
   "dependencies": {
     "@invertase/react-native-apple-authentication": "^2.4.0",
