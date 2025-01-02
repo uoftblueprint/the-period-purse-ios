@@ -1,75 +1,81 @@
 import styled from "styled-components";
 
-// Container for the skip & start buttons on the onboarding pages 
+// Container for the skip & start buttons on the onboarding pages
 export const TwoButtonContainer = styled.SafeAreaView`
-  flexDirection: row;
-  alignSelf: center;
+  flex-direction: row;
+  align-self: center;
+  justify-content: center;
   position: absolute;
   bottom: 5%;
-  right: 9%
+  width: 100%;
 `;
 
-// Container for the back arrow button in the top-left corner 
+// Container for the back arrow button in the top-left corner
 export const BackButtonContainer = styled.SafeAreaView`
-  alignItems: stretch;
-  borderRadius: 10px;
-  position: absolute; 
+  alignitems: stretch;
+  borderradius: 10px;
+  position: absolute;
   left: 10px;
   top: 5%;
-  flexDirection: row
+  flexdirection: row;
 `;
 
-// Lines on the success page 
+// Lines on the success page
 export const HorizontalLine = styled.SafeAreaView`
-  borderBottomColor: #CFCFCF;
-  borderBottomWidth: 1px
-`; 
+  borderbottomcolor: #cfcfcf;
+  borderbottomwidth: 1px;
+`;
 
-// Border for the boxes on the registration pages 
+// Border for the boxes on the registration pages
 export const InputBorderContainer = styled.View`
-  alignSelf: center;
+  alignself: center;
   width: 90%;
   height: 80px;
-  borderWidth: 2px;
-  borderColor: #5A9F93;
-  borderRadius: 10px;
-  backgroundColor: #FFFFFF;
+  borderwidth: 2px;
+  bordercolor: #5a9f93;
+  borderradius: 10px;
+  backgroundcolor: #ffffff;
   padding: 18px;
-  marginTop: 200px
+  margintop: 200px;
 `;
 
 // Container for the input boxes on onboarding pages
 export const InputContainer = styled.SafeAreaView`
-  alignSelf: center;
+  alignself: center;
   width: 50%;
   height: 8%;
-  borderRadius: 10px;
-  backgroundColor: #FFFFFF;
+  borderradius: 10px;
+  backgroundcolor: #ffffff;
 `;
 
 // Container for the title of the page at the top
 export const PageTitleContainer = styled.SafeAreaView`
   width: 85%;
-  height: 40px
+  height: 40px;
 `;
 
 // Last row on the success page for multiple icons
 export const SymptomIconContainer = styled.SafeAreaView`
-  marginTop: 4px;
-  flexDirection: row
+  margin-top: 4px;
+  flex-direction: row;
+  align-self: flex-start;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 `;
 
-// Container for text and button in the same line 
+// Container for text and button in the same line
 export const TextButtonContainer = styled.SafeAreaView`
-  flexDirection: row;
-  alignSelf: center;
-  bottom: -35%
-`; 
+  flexdirection: row;
+  alignself: center;
+  bottom: -35%;
+`;
 
 export const SymptomsButtonContainer = styled.SafeAreaView`
-  flexDirection: row;
-  alignSelf: center;
+  flex-direction: row;
+  align-self: center;
   justify-content: space-evenly;
   width: 90%;
-  bottom: 74%;
+  position: absolute;
+  bottom: 20%;
+  margin-top: 20px;
 `;
