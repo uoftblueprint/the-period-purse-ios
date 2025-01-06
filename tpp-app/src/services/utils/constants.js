@@ -43,7 +43,8 @@ export const TRACK_SYMPTOMS = {
   MOOD: 'trackMood',
   SLEEP: 'trackSleep',
   CRAMPS: 'trackCramps',
-  EXERCISE: 'trackExercise'
+  EXERCISE: 'trackExercise',
+  OVULATION: 'trackOvulation'
 }
 
 export const FILTER_COLOURS = {
@@ -125,6 +126,8 @@ export const KEYS = {
   SELECTED_MONTH: "selectedMonth",
   SELECTED_VIEW: "selectedView",
   JOINED_DATE: "joinedDate",
+  AVERAGE_OVULATION_PHASE_LENGTH: "averageOvulationPhaseLength",
+  AVERAGE_TIME_BETWEEN_PERIOD_AND_OVULATION: "averageTimeBetweenPeriodAndOvulation"
 }
 
 export const FACT_NUM = {
@@ -169,5 +172,8 @@ export const ICLOUD = {
   LAST_SAVED_TIME: "lastSavedTime"
 }
 
-export const TUTORIAL_KEY = 'showTutorial'; // key for backend value that returns 'true' if user needs to see tutorial
+export const NOTIFICATIONS = {
+  ALLOW_OVULATION_NOTIFICATIONS: "allowOvulationNotifications"
+}
 
+export const TUTORIAL_KEY = 'showTutorial'; // key for backend value that returns 'true' if user needs to see tutorial

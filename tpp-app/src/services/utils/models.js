@@ -9,6 +9,7 @@ export class Symptoms {
     this.cramps = cramps;
     this.exercise = exercise;
     this.notes = notes;
+    this.ovulating = null; 
   }
 }
 
