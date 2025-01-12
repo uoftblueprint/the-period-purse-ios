@@ -1,12 +1,29 @@
 {
   "expo": {
-    "name": "tpp-app",
+    "name": "M. Nation",
     "slug": "tpp-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
-  },
-  "name": "tpp-app"
+    "icon": "./assets/AppIcon/180.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/SplashScreenBackground/colourwatercolour.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.tpp-app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
 }

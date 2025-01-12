@@ -1,88 +1,97 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Entypo';
-import { Button } from 'react-native-elements';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import Icon from "react-native-vector-icons/Entypo";
+import { Button } from "@rneui/themed";
 
 export const WideButton = ({ onPress, title, color, disabled, bottom }) => {
-    return (
-    <TouchableOpacity onPress={onPress} 
+  return (
+    <TouchableOpacity
+      onPress={onPress}
       style={{
-        alignItems: 'stretch', 
-        justifyContent: 'center',
+        alignItems: "stretch",
+        justifyContent: "center",
         backgroundColor: color,
         borderRadius: 10,
         width: 330,
         height: 52,
-        alignSelf: 'center',
+        alignSelf: "center",
         margin: 10,
-        bottom: bottom
-      }} disabled={disabled}>
+        bottom: bottom,
+      }}
+      disabled={disabled}
+    >
       <Text style={[styles.wideButtonText, { opacity: disabled ? 0.5 : 1.0 }]}>{title}</Text>
     </TouchableOpacity>
   );
-}
+};
 
 export const NextButton = ({ onPress, title, disabled }) => {
-    return (
-    <TouchableOpacity onPress={onPress} disabled={disabled} 
-      style={[styles.nextButtonContainer, { opacity: disabled ? 0.5 : 1.0 }]}>
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      style={[styles.nextButtonContainer, { opacity: disabled ? 0.5 : 1.0 }]}
+    >
       <Text style={styles.nextButtonText}>{title}</Text>
-    </TouchableOpacity>);
-}
-  
+    </TouchableOpacity>
+  );
+};
+
 export const SkipButton = ({ onPress, title }) => {
-    return (
+  return (
     <TouchableOpacity onPress={onPress} style={styles.skipButtonContainer}>
       <Text style={styles.skipButtonText}>{title}</Text>
-    </TouchableOpacity>);
-}
-  
+    </TouchableOpacity>
+  );
+};
+
 export const CrossButton = ({ onPress }) => {
-    return (
-    <Button icon={<Icon name="cross" size={30} color="#000000"/>}
-        onPress={onPress}
-        type="clear"
-    />);
-}
+  return <Button icon={<Icon name="cross" size={30} color="#000000" />} onPress={onPress} type="clear" />;
+};
 
 export const UnderlineButton = ({ onPress, title }) => {
-    return (
+  return (
     <TouchableOpacity onPress={onPress} style={{ marginTop: 7 }}>
-        <Text style={styles.underlineButtonText}>{title}</Text>
-    </TouchableOpacity>);
-}
+      <Text style={styles.underlineButtonText}>{title}</Text>
+    </TouchableOpacity>
+  );
+};
 
 export const DatePickerButton = ({ onPress, title, inputted, icon }) => {
   return (
-  <TouchableOpacity onPress={onPress} style={{ height: "100%" }}>
+    <TouchableOpacity onPress={onPress} style={{ height: "100%" }}>
       {icon}
       <Text style={inputted ? styles.datePickerOutput : styles.datePickerButtonText}>{title}</Text>
-  </TouchableOpacity>);
-}
+    </TouchableOpacity>
+  );
+};
 
 export const SymptomsChoicesButton = ({ onPress, title, color, icon }) => {
   return (
-    <TouchableOpacity onPress={onPress} 
-      style={{ width: "100%", height: "100%", borderRadius: 16, backgroundColor: color }}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={{ width: "100%", height: "100%", borderRadius: 16, backgroundColor: color }}
+    >
       {icon}
-      {title==='Exercise' && <Text style={styles.symptomsChoicesButtonExercise}>{title}</Text>}
-      {title==='Mood' && <Text style={styles.symptomsChoicesButtonMood}>{title}</Text>}
-      {title !== 'Exercise' && title !== 'Mood' && <Text style={styles.symptomsChoicesButtonText}>{title}</Text> }
+      {title === "Exercise" && <Text style={styles.symptomsChoicesButtonExercise}>{title}</Text>}
+      {title === "Mood" && <Text style={styles.symptomsChoicesButtonMood}>{title}</Text>}
+      {title !== "Exercise" && title !== "Mood" && <Text style={styles.symptomsChoicesButtonText}>{title}</Text>}
       {/* <Text style={title === 'Exercise' ? styles.symptomsChoicesButtonExercise : styles.symptomsChoicesButtonText}>{title}</Text> */}
-    </TouchableOpacity>);
-}
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   wideButtonText: {
     color: "#FFFFFF",
-    textAlign: 'center',
-    fontFamily: 'Avenir',
-    fontSize: 18, 
-    fontWeight: '800' 
+    textAlign: "center",
+    fontFamily: "Avenir",
+    fontSize: 18,
+    fontWeight: "800",
   },
   nextButtonContainer: {
-    alignItems: 'stretch', 
-    justifyContent: 'center',
+    alignItems: "stretch",
+    justifyContent: "center",
     backgroundColor: "#5A9F93",
     borderRadius: 10,
     width: 149,
@@ -91,71 +100,71 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     color: "#FFFFFF",
-    textAlign: 'center',
-    fontFamily: 'Avenir',
-    fontSize: 15, 
-    fontWeight: '800'
-  }, 
+    textAlign: "center",
+    fontFamily: "Avenir",
+    fontSize: 15,
+    fontWeight: "800",
+  },
   skipButtonContainer: {
-    alignItems: 'stretch', 
-    justifyContent: 'center',
+    alignItems: "stretch",
+    justifyContent: "center",
     borderRadius: 10,
     width: 149,
     height: 54,
     // bottom: 10,
-    marginRight: 20
+    marginRight: 20,
   },
   skipButtonText: {
-    color: "#5A9F93", 
+    color: "#5A9F93",
     fontSize: 15,
-    textAlign: 'center'
+    textAlign: "center",
   },
   underlineButtonText: {
     color: "#5A9F93",
-    textAlign: 'center', 
-    textDecorationLine: 'underline', 
-    fontWeight: '800', 
-    fontSize: 15, 
-    fontFamily: 'Avenir'
-  }, 
+    textAlign: "center",
+    textDecorationLine: "underline",
+    fontWeight: "800",
+    fontSize: 15,
+    fontFamily: "Avenir",
+  },
   datePickerButtonText: {
-    color: "#6D6E71", 
-    fontFamily: 'Avenir', 
-    fontSize: 17, 
-    textAlign: 'center', 
-    fontWeight: '400',
-    right: '5%'
+    color: "#6D6E71",
+    fontFamily: "Avenir",
+    fontSize: 17,
+    textAlign: "center",
+    fontWeight: "400",
+    right: "5%",
   },
   datePickerOutput: {
-    color: "#000000", 
-    fontFamily: 'System', 
-    fontSize: 22, 
-    textAlign: 'center', 
-    fontWeight: '600',
-    marginTop: '10%'
+    color: "#000000",
+    fontFamily: "System",
+    fontSize: 22,
+    textAlign: "center",
+    fontWeight: "600",
+    marginTop: "10%",
   },
   symptomsChoicesButtonText: {
     color: "#000000",
     fontFamily: "Avenir",
-    fontWeight: '500',
-    fontSize: 14, 
-    top: '75%',
-    textAlign: "center"
+    fontWeight: "500",
+    fontSize: 14,
+    top: "75%",
+    textAlign: "center",
   },
   symptomsChoicesButtonExercise: {
     color: "#000000",
     fontFamily: "Avenir",
-    fontWeight: '500',
-    fontSize: 14, 
-    top: '77%',
-    textAlign: "center"
-  }, 
+    fontWeight: "500",
+    fontSize: 14,
+    top: "77%",
+    textAlign: "center",
+  },
   symptomsChoicesButtonMood: {
     color: "#000000",
     fontFamily: "Avenir",
-    fontWeight: '500',
-    fontSize: 14, 
-    top: '70%',
-    textAlign: "center"
-  }
+    fontWeight: "500",
+    fontSize: 14,
+    top: "70%",
+    textAlign: "center",
+  },
 });
