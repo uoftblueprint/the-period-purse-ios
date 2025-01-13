@@ -39,13 +39,13 @@ export const EXERCISE_TYPE = {
 };
 
 export const TRACK_SYMPTOMS = {
-  FLOW: 'trackFlow',
-  MOOD: 'trackMood',
-  SLEEP: 'trackSleep',
-  CRAMPS: 'trackCramps',
-  EXERCISE: 'trackExercise',
-  OVULATION: 'trackOvulation'
-}
+  FLOW: "trackFlow",
+  MOOD: "trackMood",
+  SLEEP: "trackSleep",
+  CRAMPS: "trackCramps",
+  EXERCISE: "trackExercise",
+  OVULATION: "trackOvulation",
+};
 
 export const FILTER_COLOURS = {
   FLOW: {
@@ -127,8 +127,8 @@ export const KEYS = {
   SELECTED_VIEW: "selectedView",
   JOINED_DATE: "joinedDate",
   AVERAGE_OVULATION_PHASE_LENGTH: "averageOvulationPhaseLength",
-  AVERAGE_TIME_BETWEEN_PERIOD_AND_OVULATION: "averageTimeBetweenPeriodAndOvulation"
-}
+  AVERAGE_TIME_BETWEEN_PERIOD_AND_OVULATION: "averageTimeBetweenPeriodAndOvulation",
+};
 
 export const FACT_NUM = {
   FACT_CYCLE_NUM: "factCycleNumber",
@@ -169,12 +169,11 @@ export const APPLE_CREDENTIALS = {
 
 export const ICLOUD = {
   BACKUP_KEY: "tpp-backup",
-  LAST_SAVED_TIME: "lastSavedTime"
-}
+  LAST_SAVED_TIME: "lastSavedTime",
+};
 
 export const NOTIFICATIONS = {
-  ALLOW_OVULATION_NOTIFICATIONS: "allowOvulationNotifications"
-}
+  ALLOW_OVULATION_NOTIFICATIONS: "allowOvulationNotifications",
+};
 
-export const TUTORIAL_KEY = 'showTutorial'; // key for backend value that returns 'true' if user needs to see tutorial
-
+export const TUTORIAL_KEY = "showTutorial"; // key for backend value that returns 'true' if user needs to see tutorial
