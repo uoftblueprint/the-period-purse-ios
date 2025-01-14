@@ -196,6 +196,11 @@ export default function CycleScreen({ navigation }) {
                     <Calendar fill="red" style={styles.icon} />
                   </InfoCard>
                 </SafeAreaView>
+                <SafeAreaView style={[styles.rowContainer, styles.infoCardContainer, styles.bottom_element]}>
+                <InfoCard header="Average ovulation phase length" days={avgPeriodLength} backgroundColor="#B9E0D8">
+                    <BloodDrop fill="red" style={styles.icon} />
+                  </InfoCard>
+                  </SafeAreaView>  
                 <MinimizedHistoryCard navigation={navigation} intervals={intervals} onPeriod={periodDays != 0} />
                 <View style={{ marginBottom: 70 }}>
                   <Footer navigation={navigation} />
@@ -316,5 +321,8 @@ const styles = StyleSheet.create({
   },
   element: {
     marginVertical: "7%",
+  },
+  bottom_element:{
+    marginBottom: "7%"
   },
 });
