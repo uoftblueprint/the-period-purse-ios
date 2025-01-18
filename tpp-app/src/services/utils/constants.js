@@ -47,6 +47,10 @@ export const TRACK_SYMPTOMS = {
   OVULATION: "trackOvulation",
 };
 
+export const OVULATION = {
+  OVULATING: "Ovulating",
+}
+
 export const FILTER_COLOURS = {
   FLOW: {
     HEAVY: "#D42629",
