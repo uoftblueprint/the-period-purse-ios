@@ -4,7 +4,7 @@ import ExpandArrow from "../../../assets/icons/arrow_accordion.svg";
 import OptionPicker from "./OptionPicker";
 import TimeInput from "./TimeInput";
 import TextArea from "./TextArea";
-import { FLOW_LEVEL, CRAMP_LEVEL, MOOD_LEVEL, EXERCISE_TYPE } from "../../services/utils/constants";
+import { FLOW_LEVEL, CRAMP_LEVEL, MOOD_LEVEL, EXERCISE_TYPE, OVULATION } from "../../services/utils/constants";
 import { ExerciseActivity } from "../../services/utils/models";
 
 // ALL ICON IMPORTS
@@ -47,6 +47,10 @@ import WaterSports from "../../../assets/icons/symptoms/exercise/exercise-water-
 import CycleSports from "../../../assets/icons/symptoms/exercise/exercise-cycle-sports.svg";
 import RacketSports from "../../../assets/icons/symptoms/exercise/exercise-racket-sports.svg";
 import WinterSports from "../../../assets/icons/symptoms/exercise/exercise-winter-sports.svg";
+
+
+//OVULATION ICONS
+import OvulatingIcon from "../../../assets/icons/symptoms/ovulation/ovulating_egg.svg";
 
 const accordionData = {
   flow: {
@@ -105,6 +109,13 @@ const accordionData = {
       <WinterSports value={EXERCISE_TYPE.WINTER_SPORT} />,
     ],
   },
+  ovulation:{
+    title: "Ovulation",
+    icon: OvulatingIcon,
+    options: [
+      <OvulatingIcon fill={"#000"} value={OVULATION.OVULATING} />,
+    ]
+  }, 
   notes: {
     title: "Notes",
     icon: NotesIcon,
@@ -212,6 +223,14 @@ export default class Accordion extends Component {
       case "notes":
         accContent = <TextArea onInput={this.props.setState} curVal={this.props.value} />;
         break;
+      case "ovulation":
+        accContent = (
+          <OptionPicker
+            optionIcons={this.accordionType.options}
+            selectThis={this.props.setState}
+            curVal={this.props.value}
+          />
+        );
       default: // render empty accordion
         break;
     }
