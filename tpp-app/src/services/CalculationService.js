@@ -6,6 +6,17 @@ import { GETStoredYears } from "./utils/helpers";
 import { errorAlertModal } from "../error/errorAlertModal";
 
 /**
+ * Calculates the average ovulation length given a completeHistory of their period intervals
+ * @return {number} representing average ovulation length, 0 if not enough entries
+ *
+ * @Fred implement this.
+ * @Mark use this for your prediction task.
+ */
+export const calculateAverageOvulationLength = () => {
+  return 0;
+};
+
+/**
  * Calculates the average period length given a completeHistory of their period intervals
  * @param completeHistory list of period intervals in the form returned by GETCycleHistoryByYear
  * @return {number} representing average period length, 0 if not enough entries to calculate average
