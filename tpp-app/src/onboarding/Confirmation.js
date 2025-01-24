@@ -58,7 +58,7 @@ export default function Confirmation({ route, navigation }) {
       // exercise
       iconComponents.push(<ExerciseIcon key="exercise" style={styles.icon} />);
     if (trackingPreferences[5])
-      // exercise
+      // ovulation
       iconComponents.push(
         <OvulationIcon key="ovulation" style={styles.icon} />
       );

@@ -135,7 +135,7 @@ export default function SymptomsChoices({ route, navigation }) {
             <SymptomsChoicesButton
               onPress={handleOvulation}
               title="Ovulation"
-              icon={<OvulationIcon style={styles.icon} />}
+              icon={<OvulationIcon style={styles.ovulationIcon} />}
             />
           </SafeAreaView>
         </SymptomsButtonContainer>
@@ -221,6 +221,11 @@ const styles = StyleSheet.create({
   icon: {
     alignSelf: "center",
     top: "30%",
+  },
+  ovulationIcon: {
+    alignSelf: "center",
+    top: "30%",
+    left: 1.5,
   },
   card: {
     bottom: "33%",
