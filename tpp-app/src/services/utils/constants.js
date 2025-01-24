@@ -116,6 +116,7 @@ export const VIEWS = {
   Exercise: "Exercise",
   Cramps: "Cramps",
   Sleep: "Sleep",
+  Ovulation: "Ovulation",
 };
 
 export const KEYS = {
@@ -127,7 +128,8 @@ export const KEYS = {
   SELECTED_VIEW: "selectedView",
   JOINED_DATE: "joinedDate",
   AVERAGE_OVULATION_PHASE_LENGTH: "averageOvulationPhaseLength",
-  AVERAGE_TIME_BETWEEN_PERIOD_AND_OVULATION: "averageTimeBetweenPeriodAndOvulation",
+  AVERAGE_TIME_BETWEEN_PERIOD_AND_OVULATION:
+    "averageTimeBetweenPeriodAndOvulation",
 };
 
 export const FACT_NUM = {
