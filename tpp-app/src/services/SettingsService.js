@@ -118,7 +118,10 @@ export const POSTUpdateOnePreference = async (key, value) =>
 export const POSTRemindLogSymptoms = async (enableRemind) =>
   new Promise(async (resolve, reject) => {
     try {
-      AsyncStorage.setItem(REMINDERS.REMIND_LOG_SYMPTOMS, JSON.stringify(enableRemind)).then(async () => {
+      AsyncStorage.setItem(
+        REMINDERS.REMIND_LOG_SYMPTOMS,
+        JSON.stringify(enableRemind)
+      ).then(async () => {
         console.log("Posted period symptom logging reminder", enableRemind);
 
         // If enabled, re-schedule notifications
@@ -137,7 +140,9 @@ export const POSTRemindLogSymptoms = async (enableRemind) =>
             remindTime = hour + ":00";
           }
 
-          PushNotificationIOS.removePendingNotificationRequests(["remindsymptoms"]);
+          PushNotificationIOS.removePendingNotificationRequests([
+            "remindsymptoms",
+          ]);
 
           switch (remindLogSymptomsFreq) {
             case "Every day":
@@ -188,7 +193,9 @@ export const POSTRemindLogSymptoms = async (enableRemind) =>
               break;
           }
         } else {
-          PushNotificationIOS.removePendingNotificationRequests(["remindsymptoms"]);
+          PushNotificationIOS.removePendingNotificationRequests([
+            "remindsymptoms",
+          ]);
         }
         resolve();
       });
@@ -207,10 +214,12 @@ export const POSTRemindLogSymptoms = async (enableRemind) =>
 export const GETRemindLogSymptoms = async () =>
   new Promise(async (resolve, reject) => {
     try {
-      await AsyncStorage.getItem(REMINDERS.REMIND_LOG_SYMPTOMS).then(async (value) => {
-        console.log(`Retrieved RemindLogSymptoms boolean`);
-        resolve(JSON.parse(value));
-      });
+      await AsyncStorage.getItem(REMINDERS.REMIND_LOG_SYMPTOMS).then(
+        async (value) => {
+          console.log(`Retrieved RemindLogSymptoms boolean`);
+          resolve(JSON.parse(value));
+        }
+      );
     } catch (e) {
       console.log(`GETRemindLogSymptoms error: ${JSON.stringify(e)}`);
       errorAlertModal();
@@ -227,7 +236,9 @@ export const POSTRemindLogPeriodFreq = async (advanceDays) =>
   new Promise(async (resolve, reject) => {
     try {
       AsyncStorage.setItem(REMINDERS.LOG_PERIOD_DAYS, advanceDays).then(() => {
-        console.log("Posted the number of days in advance to send log period reminder");
+        console.log(
+          "Posted the number of days in advance to send log period reminder"
+        );
         resolve();
       });
     } catch (e) {
@@ -245,7 +256,9 @@ export const GETRemindLogPeriodFreq = async () =>
   new Promise(async (resolve, reject) => {
     try {
       await AsyncStorage.getItem(REMINDERS.LOG_PERIOD_DAYS).then((value) => {
-        console.log("Retrieved the number of days in advance to send log period reminder");
+        console.log(
+          "Retrieved the number of days in advance to send log period reminder"
+        );
         resolve(value);
       });
     } catch (e) {
