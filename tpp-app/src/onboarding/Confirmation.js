@@ -2,11 +2,16 @@ import React from "react";
 import { StyleSheet, Text, View, ImageBackground } from "react-native";
 import OnboardingBackground from "../../assets/SplashScreenBackground/colourwatercolour.png";
 import { WideButton } from "./components/ButtonComponents";
-import { BackButtonContainer, HorizontalLine, SymptomIconContainer } from "./components/ContainerComponents";
+import {
+  BackButtonContainer,
+  HorizontalLine,
+  SymptomIconContainer,
+} from "./components/ContainerComponents";
 import { SETTutorial } from "../services/TutorialService";
 import PaddyIcon from "../../assets/icons/paddy.svg";
 import FlowIcon from "../../assets/icons/flow.svg";
 import SleepIcon from "../../assets/icons/sleep.svg";
+import OvulationIcon from "../../assets/icons/ovulation.svg";
 import MoodIcon from "../../assets/icons/mood.svg";
 import ExerciseIcon from "../../assets/icons/exercise.svg";
 import CrampsIcon from "../../assets/icons/cramps.svg";
@@ -30,7 +35,8 @@ export const STACK_SCREENS = {
 };
 
 export default function Confirmation({ route, navigation }) {
-  const { periodLength, periodStart, periodEnd, trackingPreferences } = route.params;
+  const { periodLength, periodStart, periodEnd, trackingPreferences } =
+    route.params;
 
   function IconPref() {
     let iconComponents = [];
@@ -39,7 +45,9 @@ export default function Confirmation({ route, navigation }) {
       iconComponents.push(<FlowIcon key="flow" style={styles.icon} />);
     if (trackingPreferences[1])
       // mood
-      iconComponents.push(<MoodIcon key="mood" style={styles.icon} fill="black" />);
+      iconComponents.push(
+        <MoodIcon key="mood" style={styles.icon} fill="black" />
+      );
     if (trackingPreferences[2])
       // sleep
       iconComponents.push(<SleepIcon key="sleep" style={styles.icon} />);
@@ -49,6 +57,11 @@ export default function Confirmation({ route, navigation }) {
     if (trackingPreferences[4])
       // exercise
       iconComponents.push(<ExerciseIcon key="exercise" style={styles.icon} />);
+    if (trackingPreferences[5])
+      // ovulation
+      iconComponents.push(
+        <OvulationIcon key="ovulation" style={styles.icon} />
+      );
     return <SymptomIconContainer>{iconComponents}</SymptomIconContainer>;
   }
 
@@ -63,7 +76,8 @@ export default function Confirmation({ route, navigation }) {
   }
 
   function Length() {
-    if (periodLength) return <Text style={styles.text}>{periodLength} days</Text>;
+    if (periodLength)
+      return <Text style={styles.text}>{periodLength} days</Text>;
     else return null;
   }
 
@@ -116,7 +130,9 @@ export default function Confirmation({ route, navigation }) {
           bottom="-8%"
           onPress={() => {
             POSTJoinedDate();
-            SETTutorial(true).finally(() => navigation.navigate(STACK_SCREENS.MAIN_PAGE));
+            SETTutorial(true).finally(() =>
+              navigation.navigate(STACK_SCREENS.MAIN_PAGE)
+            );
           }}
         />
       </ImageBackground>
