@@ -20,7 +20,9 @@ export const WideButton = ({ onPress, title, color, disabled, bottom }) => {
       }}
       disabled={disabled}
     >
-      <Text style={[styles.wideButtonText, { opacity: disabled ? 0.5 : 1.0 }]}>{title}</Text>
+      <Text style={[styles.wideButtonText, { opacity: disabled ? 0.5 : 1.0 }]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -46,7 +48,13 @@ export const SkipButton = ({ onPress, title }) => {
 };
 
 export const CrossButton = ({ onPress }) => {
-  return <Button icon={<Icon name="cross" size={30} color="#000000" />} onPress={onPress} type="clear" />;
+  return (
+    <Button
+      icon={<Icon name="cross" size={30} color="#000000" />}
+      onPress={onPress}
+      type="clear"
+    />
+  );
 };
 
 export const UnderlineButton = ({ onPress, title }) => {
@@ -61,7 +69,11 @@ export const DatePickerButton = ({ onPress, title, inputted, icon }) => {
   return (
     <TouchableOpacity onPress={onPress} style={{ height: "100%" }}>
       {icon}
-      <Text style={inputted ? styles.datePickerOutput : styles.datePickerButtonText}>{title}</Text>
+      <Text
+        style={inputted ? styles.datePickerOutput : styles.datePickerButtonText}
+      >
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -70,12 +82,26 @@ export const SymptomsChoicesButton = ({ onPress, title, color, icon }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{ width: "100%", height: "100%", borderRadius: 16, backgroundColor: color }}
+      style={{
+        width: "100%",
+        height: "100%",
+        borderRadius: 16,
+        backgroundColor: color,
+      }}
     >
       {icon}
-      {title === "Exercise" && <Text style={styles.symptomsChoicesButtonExercise}>{title}</Text>}
-      {title === "Mood" && <Text style={styles.symptomsChoicesButtonMood}>{title}</Text>}
-      {title !== "Exercise" && title !== "Mood" && <Text style={styles.symptomsChoicesButtonText}>{title}</Text>}
+      {title === "Exercise" && (
+        <Text style={styles.symptomsChoicesButtonExercise}>{title}</Text>
+      )}
+      {title === "Mood" && (
+        <Text style={styles.symptomsChoicesButtonMood}>{title}</Text>
+      )}
+      {title === "Ovulation" && (
+        <Text style={styles.symptomsChoicesButtonOvulation}>{title}</Text>
+      )}
+      {title !== "Exercise" && title !== "Mood" && title !== "Ovulation" && (
+        <Text style={styles.symptomsChoicesButtonText}>{title}</Text>
+      )}
       {/* <Text style={title === 'Exercise' ? styles.symptomsChoicesButtonExercise : styles.symptomsChoicesButtonText}>{title}</Text> */}
     </TouchableOpacity>
   );
@@ -165,6 +191,14 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: 14,
     top: "70%",
+    textAlign: "center",
+  },
+  symptomsChoicesButtonOvulation: {
+    color: "#000000",
+    fontFamily: "Avenir",
+    fontWeight: "500",
+    fontSize: 12,
+    top: "75%",
     textAlign: "center",
   },
 });

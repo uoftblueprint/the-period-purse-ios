@@ -18,7 +18,9 @@ export const POSTInitialPeriodLength = async (periodLength) =>
           [KEYS.INITIAL_PERIOD_LENGTH, periodLength],
           [KEYS.AVERAGE_PERIOD_LENGTH, periodLength],
         ]).then(() => {
-          console.log(`Initialized ${KEYS.INITIAL_PERIOD_LENGTH}, ${KEYS.AVERAGE_PERIOD_LENGTH} as ${periodLength}`);
+          console.log(
+            `Initialized ${KEYS.INITIAL_PERIOD_LENGTH}, ${KEYS.AVERAGE_PERIOD_LENGTH} as ${periodLength}`
+          );
           resolve();
         });
       }
@@ -48,7 +50,11 @@ export const POSTInitialPeriodStart = async (periodStart, periodEnd) =>
 
         // Use timestamps to populate the list of dates to avoid
         // messing up when dealing with last day of a month and/or year
-        for (let i = periodStartTime; i <= periodEndTime; i = i + 1000 * 60 * 60 * 24) {
+        for (
+          let i = periodStartTime;
+          i <= periodEndTime;
+          i = i + 1000 * 60 * 60 * 24
+        ) {
           const currentDate = new Date(i);
           yearsSet.add(currentDate.getFullYear());
           dates.push(currentDate);
@@ -61,7 +67,8 @@ export const POSTInitialPeriodStart = async (periodStart, periodEnd) =>
 
         // Initialize the correct daily logs
         dates.forEach((date) => {
-          yearDicts[date.getFullYear()][date.getMonth()][date.getDate() - 1] = new Symptoms(FLOW_LEVEL.MEDIUM);
+          yearDicts[date.getFullYear()][date.getMonth()][date.getDate() - 1] =
+            new Symptoms(FLOW_LEVEL.MEDIUM);
         });
 
         let allSet = [];
@@ -89,18 +96,29 @@ export const POSTInitialPeriodStart = async (periodStart, periodEnd) =>
  * @param sleep boolean representing whether to track sleep
  * @param cramps boolean representing whether to track cramps
  * @param exercise boolean representing whether to track exercise
+ * @param ovulation boolean representing whether to track ovulation
  * @returns a promise resolving when the multiset operation is complete
  */
-export const POSTSymptomsToTrack = async (flow, mood, sleep, cramps, exercise) =>
+export const POSTSymptomsToTrack = async (
+  flow,
+  mood,
+  sleep,
+  cramps,
+  exercise,
+  ovulation
+) =>
   new Promise(async (resolve, reject) => {
     try {
-      if ([flow, mood, sleep, cramps, exercise].some((bool) => bool)) {
+      if (
+        [flow, mood, sleep, cramps, exercise, ovulation].some((bool) => bool)
+      ) {
         await AsyncStorage.multiSet([
           [TRACK_SYMPTOMS.FLOW, JSON.stringify(flow)],
           [TRACK_SYMPTOMS.MOOD, JSON.stringify(mood)],
           [TRACK_SYMPTOMS.SLEEP, JSON.stringify(sleep)],
           [TRACK_SYMPTOMS.CRAMPS, JSON.stringify(cramps)],
           [TRACK_SYMPTOMS.EXERCISE, JSON.stringify(exercise)],
+          [TRACK_SYMPTOMS.OVULATION, JSON.stringify(ovulation)],
         ]).then(() => {
           console.log("Initialized tracking preferences");
           resolve();
@@ -121,10 +139,14 @@ export const POSTSymptomsToTrack = async (flow, mood, sleep, cramps, exercise) =
 export const POSTJoinedDate = async () =>
   new Promise(async (resolve, reject) => {
     try {
-      await AsyncStorage.setItem(KEYS.JOINED_DATE, getISODate(new Date())).then(() => {
-        console.log(`Stored ${KEYS.JOINED_DATE} as ${getISODate(new Date())}`);
-        resolve();
-      });
+      await AsyncStorage.setItem(KEYS.JOINED_DATE, getISODate(new Date())).then(
+        () => {
+          console.log(
+            `Stored ${KEYS.JOINED_DATE} as ${getISODate(new Date())}`
+          );
+          resolve();
+        }
+      );
     } catch (e) {
       console.log(`POSTJoinedDate error: ${JSON.stringify(e)}`);
       errorAlertModal();

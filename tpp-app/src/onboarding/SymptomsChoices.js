@@ -4,10 +4,19 @@ import { Card, Text } from "@rneui/themed";
 import OnboardingBackground from "../../assets/SplashScreenBackground/colourwatercolour.png";
 import { STACK_SCREENS } from "./Confirmation";
 import { BackButton } from "../home/components/BackButtonComponent";
-import { NextButton, SymptomsChoicesButton, SkipButton } from "./components/ButtonComponents";
+import {
+  NextButton,
+  SymptomsChoicesButton,
+  SkipButton,
+} from "./components/ButtonComponents";
 import { BodyText, TitleText } from "./components/TextComponents";
-import { TwoButtonContainer, BackButtonContainer, SymptomsButtonContainer } from "./components/ContainerComponents";
+import {
+  TwoButtonContainer,
+  BackButtonContainer,
+  SymptomsButtonContainer,
+} from "./components/ContainerComponents";
 import { POSTSymptomsToTrack } from "../services/OnboardingService";
+import OvulationIcon from "../../assets/icons/ovulation.svg";
 import MoodIcon from "../../assets/icons/mood.svg";
 import ExerciseIcon from "../../assets/icons/exercise.svg";
 import CrampsIcon from "../../assets/icons/cramps.svg";
@@ -28,10 +37,12 @@ export default function SymptomsChoices({ route, navigation }) {
   const [mood, setMood] = useState(WHITE);
   const [cramp, setCramp] = useState(WHITE);
   const [exercise, setExercise] = useState(WHITE);
+  const [ovulation, setOvulation] = useState(WHITE);
 
   const handleSleep = () => {
     sleep == WHITE ? setSleep(TEAL) : setSleep(WHITE);
   };
+
   const handleMood = () => {
     mood == WHITE ? setMood(TEAL) : setMood(WHITE);
   };
@@ -40,6 +51,10 @@ export default function SymptomsChoices({ route, navigation }) {
   };
   const handleExercise = () => {
     exercise == WHITE ? setExercise(TEAL) : setExercise(WHITE);
+  };
+
+  const handleOvulation = () => {
+    ovulation == WHITE ? setOvulation(TEAL) : setOvulation(WHITE);
   };
 
   return (
@@ -60,12 +75,24 @@ export default function SymptomsChoices({ route, navigation }) {
           <BackgroundShape style={{ top: "10%" }} />
           <CalendarIcon width="250" height="250" style={{ bottom: "30%" }} />
           <BarIcon style={{ bottom: "31%" }} />
-          <TitleText style={{ bottom: "30%" }}>What symptoms do you {"\n"} want to track?</TitleText>
-          <BodyText style={{ bottom: "31%" }}>You can change these anytime in your settings. {"\n"}</BodyText>
+          <TitleText style={{ bottom: "30%" }}>
+            What symptoms do you {"\n"} want to track?
+          </TitleText>
+          <BodyText style={{ bottom: "31%" }}>
+            You can change these anytime in your settings. {"\n"}
+          </BodyText>
           <Card containerStyle={[styles.card]}>
             <FlowDeselected style={styles.image} />
-            <Text style={{ top: 10, marginLeft: "28%", marginRight: "4%", fontSize: 14.5 }}>
-              By default, we'll always track your period flow. Choose up to four other symptoms to track.
+            <Text
+              style={{
+                top: 10,
+                marginLeft: "28%",
+                marginRight: "4%",
+                fontSize: 14.5,
+              }}
+            >
+              By default, we'll always track your period flow. Choose up to four
+              other symptoms to track.
             </Text>
           </Card>
         </View>
@@ -78,7 +105,9 @@ export default function SymptomsChoices({ route, navigation }) {
               icon={<MoodIcon style={styles.icon} fill="black" />}
             />
           </SafeAreaView>
-          <SafeAreaView style={[styles.symptoms, { backgroundColor: exercise }]}>
+          <SafeAreaView
+            style={[styles.symptoms, { backgroundColor: exercise }]}
+          >
             <SymptomsChoicesButton
               onPress={handleExercise}
               title="Exercise"
@@ -86,10 +115,28 @@ export default function SymptomsChoices({ route, navigation }) {
             />
           </SafeAreaView>
           <SafeAreaView style={[styles.symptoms, { backgroundColor: cramp }]}>
-            <SymptomsChoicesButton onPress={handleCramp} title="Cramps" icon={<CrampsIcon style={styles.icon} />} />
+            <SymptomsChoicesButton
+              onPress={handleCramp}
+              title="Cramps"
+              icon={<CrampsIcon style={styles.icon} />}
+            />
           </SafeAreaView>
           <SafeAreaView style={[styles.symptoms, { backgroundColor: sleep }]}>
-            <SymptomsChoicesButton onPress={handleSleep} title="Sleep" icon={<SleepIcon style={styles.icon} />} />
+            <SymptomsChoicesButton
+              onPress={handleSleep}
+              title="Sleep"
+              icon={<SleepIcon style={styles.icon} />}
+            />
+          </SafeAreaView>
+
+          <SafeAreaView
+            style={[styles.symptoms, { backgroundColor: ovulation }]}
+          >
+            <SymptomsChoicesButton
+              onPress={handleOvulation}
+              title="Ovulation"
+              icon={<OvulationIcon style={styles.icon} />}
+            />
           </SafeAreaView>
         </SymptomsButtonContainer>
 
@@ -102,7 +149,14 @@ export default function SymptomsChoices({ route, navigation }) {
                   periodLength: periodLength,
                   periodStart: periodStart,
                   periodEnd: periodEnd,
-                  trackingPreferences: [true, false, false, false, false],
+                  trackingPreferences: [
+                    true,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                  ],
                 });
               });
             }}
@@ -110,13 +164,21 @@ export default function SymptomsChoices({ route, navigation }) {
           <NextButton
             title="Next"
             onPress={async () => {
-              let trackingPreferences = [true, mood === TEAL, sleep === TEAL, cramp === TEAL, exercise === TEAL];
+              let trackingPreferences = [
+                true,
+                mood === TEAL,
+                sleep === TEAL,
+                cramp === TEAL,
+                exercise === TEAL,
+                ovulation === TEAL,
+              ];
               POSTSymptomsToTrack(
                 trackingPreferences[0],
                 trackingPreferences[1],
                 trackingPreferences[2],
                 trackingPreferences[3],
-                trackingPreferences[4]
+                trackingPreferences[4],
+                trackingPreferences[5]
               ).then(() => {
                 navigation.navigate(STACK_SCREENS.CONFIRMATION, {
                   periodLength: periodLength,
@@ -126,7 +188,13 @@ export default function SymptomsChoices({ route, navigation }) {
                 });
               });
             }}
-            disabled={[mood, sleep, cramp, exercise].some((element) => element == TEAL) ? false : true}
+            disabled={
+              [mood, sleep, cramp, exercise, ovulation].some(
+                (element) => element == TEAL
+              )
+                ? false
+                : true
+            }
           />
         </TwoButtonContainer>
       </ImageBackground>
