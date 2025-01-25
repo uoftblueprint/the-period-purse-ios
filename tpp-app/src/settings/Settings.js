@@ -1,11 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Switch, Text, StyleSheet, TouchableOpacity, ImageBackground, SafeAreaView } from "react-native";
+import {
+  View,
+  Switch,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+  SafeAreaView,
+} from "react-native";
 import OnboardingBackground from "../../assets/SplashScreenBackground/colourwatercolour.png";
 import CrampsIcon from "../../assets/icons/cramps.svg";
 import ExerciseIcon from "../../assets/icons/exercise.svg";
 import FlowIcon from "../../assets/icons/flow.svg";
 import MoodIcon from "../../assets/icons/mood.svg";
 import SleepIcon from "../../assets/icons/sleep.svg";
+import OvulationIcon from "../../assets/icons/ovulation.svg";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Footer } from "../services/utils/footer";
 import { ScrollView } from "react-native-gesture-handler";
@@ -26,12 +35,16 @@ import ErrorFallback from "../error/error-boundary";
 const PreferenceButton = (props) => {
   return (
     <View style={styles.horizontalCenteredColumn}>
-      <TouchableOpacity style={[styles.preferenceButton, { backgroundColor: props.set }]} onPress={props.onPress}>
+      <TouchableOpacity
+        style={[styles.preferenceButton, { backgroundColor: props.set }]}
+        onPress={props.onPress}
+      >
         {props.source === VIEWS.Flow && <FlowIcon />}
         {props.source === VIEWS.Mood && <MoodIcon fill="black" />}
         {props.source === VIEWS.Sleep && <SleepIcon />}
         {props.source === VIEWS.Exercise && <ExerciseIcon />}
         {props.source === VIEWS.Cramps && <CrampsIcon />}
+        {props.source === VIEWS.Ovulation && <OvulationIcon />}
       </TouchableOpacity>
       <Text>{props.cardName}</Text>
     </View>
@@ -47,6 +60,7 @@ const Preferences = (props) => {
   const [sleep, trackSleep] = useState("#FFFFFF");
   const [cramps, trackCramps] = useState("#FFFFFF");
   const [exercise, trackExercise] = useState("#FFFFFF");
+  const [ovulation, trackOvulation] = useState("#FFFFFF");
   const [trackingPrefs, setPrefs] = useState([]); // preferences that are currently tracked, default is empty
 
   useEffect(() => {
@@ -81,6 +95,10 @@ const Preferences = (props) => {
               symptom = "flow";
               trackFlow(TEAL);
               break;
+            case TRACK_SYMPTOMS.OVULATION:
+              symptom = "ovulation";
+              trackOvulation(OVULATION);
+              break;
             default:
               break;
           }
@@ -103,24 +121,63 @@ const Preferences = (props) => {
   };
 
   const handleCramp = () => {
-    POSTUpdateOnePreference(TRACK_SYMPTOMS.CRAMPS, cramps === WHITE).then(() => {
-      cramps === WHITE ? trackCramps(TEAL) : trackCramps(WHITE);
-    });
+    POSTUpdateOnePreference(TRACK_SYMPTOMS.CRAMPS, cramps === WHITE).then(
+      () => {
+        cramps === WHITE ? trackCramps(TEAL) : trackCramps(WHITE);
+      }
+    );
   };
 
   const handleExercise = () => {
-    POSTUpdateOnePreference(TRACK_SYMPTOMS.EXERCISE, exercise === WHITE).then(() => {
-      exercise === WHITE ? trackExercise(TEAL) : trackExercise(WHITE);
-    });
+    POSTUpdateOnePreference(TRACK_SYMPTOMS.EXERCISE, exercise === WHITE).then(
+      () => {
+        exercise === WHITE ? trackExercise(TEAL) : trackExercise(WHITE);
+      }
+    );
   };
+
+  const handleOvulation = () => {
+    POSTUpdateOnePreference(TRACK_SYMPTOMS.OVULATION, ovulation === WHITE).then(
+      () => {
+        ovulation === WHITE ? trackOvulation(TEAL) : trackOvulation(WHITE);
+      }
+    );
+  };
+
   return (
     <View>
       <Text style={styles.heading}>Tracking Preferences </Text>
       <View style={styles.preferences}>
-        <PreferenceButton source={VIEWS.Mood} cardName="Mood" set={mood} onPress={handleMood} />
-        <PreferenceButton source={VIEWS.Exercise} cardName="Exercise" set={exercise} onPress={handleExercise} />
-        <PreferenceButton source={VIEWS.Cramps} cardName="Cramps" set={cramps} onPress={handleCramp} />
-        <PreferenceButton source={VIEWS.Sleep} cardName="Sleep" set={sleep} onPress={handleSleep} />
+        <PreferenceButton
+          source={VIEWS.Mood}
+          cardName="Mood"
+          set={mood}
+          onPress={handleMood}
+        />
+        <PreferenceButton
+          source={VIEWS.Exercise}
+          cardName="Exercise"
+          set={exercise}
+          onPress={handleExercise}
+        />
+        <PreferenceButton
+          source={VIEWS.Cramps}
+          cardName="Cramps"
+          set={cramps}
+          onPress={handleCramp}
+        />
+        <PreferenceButton
+          source={VIEWS.Sleep}
+          cardName="Sleep"
+          set={sleep}
+          onPress={handleSleep}
+        />
+        <PreferenceButton
+          source={VIEWS.Ovulation}
+          cardName="Ovulation"
+          set={ovulation}
+          onPress={handleOvulation}
+        />
       </View>
     </View>
   );
@@ -130,9 +187,16 @@ const SettingsStackButton = (props) => {
   return (
     <TouchableOpacity onPress={() => props.navigation.navigate(props.name)}>
       <SafeAreaView style={[styles.rowContainer, styles.optionView]}>
-        <Text style={[styles.containerElement, styles.optionText]}>{props.name}</Text>
+        <Text style={[styles.containerElement, styles.optionText]}>
+          {props.name}
+        </Text>
         <View style={styles.containerElement}>
-          <Icon name="arrow-back-ios" size={24} color="#5A9F93" style={styles.arrowBack} />
+          <Icon
+            name="arrow-back-ios"
+            size={24}
+            color="#5A9F93"
+            style={styles.arrowBack}
+          />
         </View>
       </SafeAreaView>
       <View
@@ -183,7 +247,8 @@ const NotificationSettings = (props) => {
   // needed for Notification Page
   const [remindSymptomsFreq, setRemindSymptomsFreq] = useState("Every day");
   const [remindSymptomsTime, setRemindSymptomsTime] = useState("10:00");
-  const [remindSymptomsTimeMeridian, setRemindSymptomsTimeMeridian] = useState("AM");
+  const [remindSymptomsTimeMeridian, setRemindSymptomsTimeMeridian] =
+    useState("AM");
 
   // get the days until period
   useFocusEffect(
@@ -210,12 +275,19 @@ const NotificationSettings = (props) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (props.route.params?.remindSymptomsFreq) setRemindSymptomsFreq(props.route.params?.remindSymptomsFreq);
-      if (props.route.params?.remindSymptomsTime) setRemindSymptomsTime(props.route.params?.remindSymptomsTime);
+      if (props.route.params?.remindSymptomsFreq)
+        setRemindSymptomsFreq(props.route.params?.remindSymptomsFreq);
+      if (props.route.params?.remindSymptomsTime)
+        setRemindSymptomsTime(props.route.params?.remindSymptomsTime);
       if (props.route.params?.remindSymptomsTimeMeridian)
-        setRemindSymptomsTimeMeridian(props.route.params?.remindSymptomsTimeMeridian);
+        setRemindSymptomsTimeMeridian(
+          props.route.params?.remindSymptomsTimeMeridian
+        );
 
-      if (props.route.params?.remindSymptomsFreq && props.route.params?.remindSymptomsTime) {
+      if (
+        props.route.params?.remindSymptomsFreq &&
+        props.route.params?.remindSymptomsTime
+      ) {
         console.log(234);
         POSTRemindLogSymptoms(remindSymptomsEnabled);
       }
@@ -279,16 +351,29 @@ const NotificationSettings = (props) => {
       {/*    enabled={remindPeriodEnabled} />*/}
       <NotificationsButton
         text={"Remind me to log symptoms"}
-        subtext={`${remindSymptomsFreq} at ${remindSymptomsTime + " " + remindSymptomsTimeMeridian}`}
+        subtext={`${remindSymptomsFreq} at ${
+          remindSymptomsTime + " " + remindSymptomsTimeMeridian
+        }`}
         toggle={toggleSymptomsSwitch}
         enabled={remindSymptomsEnabled}
       />
-      <TouchableOpacity onPress={() => props.navigation.navigate(STACK_SCREENS.NOTIFICATIONS)}>
+      <TouchableOpacity
+        onPress={() => props.navigation.navigate(STACK_SCREENS.NOTIFICATIONS)}
+      >
         <View>
-          <SafeAreaView style={[styles.rowContainer, styles.notificationSettingsView]}>
-            <Text style={[styles.containerElement, styles.optionText]}>Customize notifications</Text>
+          <SafeAreaView
+            style={[styles.rowContainer, styles.notificationSettingsView]}
+          >
+            <Text style={[styles.containerElement, styles.optionText]}>
+              Customize notifications
+            </Text>
             <View style={styles.containerElement}>
-              <Icon name="arrow-back-ios" size={24} color="#5A9F93" style={styles.arrowBack} />
+              <Icon
+                name="arrow-back-ios"
+                size={24}
+                color="#5A9F93"
+                style={styles.arrowBack}
+              />
             </View>
           </SafeAreaView>
           <View
@@ -310,8 +395,14 @@ const SettingOptions = ({ navigation }) => {
       <Text style={styles.heading}>Account settings </Text>
       {/*<SettingsStackButton name={"Profile Information"}  navigation={navigation} />*/}
       {/*<SettingsStackButton name={"Privacy Policy"}  navigation={navigation}/>*/}
-      <SettingsStackButton name={STACK_SCREENS.BACK_UP_ACCOUNT} navigation={navigation} />
-      <SettingsStackButton name={STACK_SCREENS.DELETE_ACCOUNT} navigation={navigation} />
+      <SettingsStackButton
+        name={STACK_SCREENS.BACK_UP_ACCOUNT}
+        navigation={navigation}
+      />
+      <SettingsStackButton
+        name={STACK_SCREENS.DELETE_ACCOUNT}
+        navigation={navigation}
+      />
     </SafeAreaView>
   );
 };
