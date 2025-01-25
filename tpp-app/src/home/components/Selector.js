@@ -8,6 +8,7 @@ import MoodIcon from "../../../assets/icons/mood.svg";
 import ExerciseIcon from "../../../assets/icons/exercise.svg";
 import CrampsIcon from "../../../assets/icons/cramps.svg";
 import SleepIcon from "../../../assets/icons/sleep.svg";
+import OvulationIcon from "../../../assets/icons/ovulation.svg";
 import { useIsFocused } from "@react-navigation/native";
 
 //write function that takes props & renders the corresponding icon
@@ -23,6 +24,8 @@ export const SelectedIcon = ({ selectedView, style }) => {
       return <MoodIcon style={style} fill="black" />;
     case VIEWS.Sleep:
       return <SleepIcon style={style} />;
+    case VIEWS.Ovulation:
+      return <OvulationIcon style={style} />;
   }
 };
 
@@ -32,6 +35,7 @@ const trackSymptomsToViews = {
   [TRACK_SYMPTOMS.FLOW]: VIEWS.Flow,
   [TRACK_SYMPTOMS.EXERCISE]: VIEWS.Exercise,
   [TRACK_SYMPTOMS.SLEEP]: VIEWS.Sleep,
+  [TRACK_SYMPTOMS.OVULATION]: VIEWS.Ovulation,
 };
 
 const Selector = (props) => {
@@ -42,6 +46,7 @@ const Selector = (props) => {
   let exerciseSelected = props.selectedView === VIEWS.Exercise;
   let crampsSelected = props.selectedView === VIEWS.Cramps;
   let sleepSelected = props.selectedView === VIEWS.Sleep;
+  let ovulationSelected = props.selectedView === VIEWS.Ovulation;
   let selectedColor = "#B31F20";
   let unselectedColor = "#6D6E71";
   const isFocused = useIsFocused();
@@ -106,6 +111,12 @@ const Selector = (props) => {
       view: VIEWS.Sleep,
       selected: sleepSelected,
       internalIcon: SleepIcon,
+      visible: trackedViews[VIEWS.Sleep],
+    },
+    {
+      view: VIEWS.Ovulation,
+      selected: ovulationSelected,
+      internalIcon: OvulationIcon,
       visible: trackedViews[VIEWS.Sleep],
     },
   ];
