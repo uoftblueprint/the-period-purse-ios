@@ -117,7 +117,7 @@ const Selector = (props) => {
       view: VIEWS.Ovulation,
       selected: ovulationSelected,
       internalIcon: OvulationIcon,
-      visible: trackedViews[VIEWS.Sleep],
+      visible: trackedViews[VIEWS.Ovulation],
     },
   ];
 
