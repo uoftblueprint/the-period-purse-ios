@@ -50,7 +50,7 @@ import WinterSports from "../../../assets/icons/symptoms/exercise/exercise-winte
 
 
 //OVULATION ICONS
-import OvulatingIcon from "../../../assets/icons/symptoms/ovulation/ovulating_egg.svg";
+import OvulatingIcon from "../../../assets/icons/ovulation.svg";
 
 const accordionData = {
   flow: {
