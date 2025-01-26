@@ -36,6 +36,7 @@ import {
   ExerciseWinterSportIcon,
   ExerciseYogaIcon,
 } from "../../services/utils/calendaricons";
+import { OvulatingIcon } from "../../services/utils/calendaricons";
 import { VIEWS } from "../../services/utils/constants";
 import { FILTER_COLOURS, FILTER_TEXT_COLOURS } from "../../services/utils/constants";
 import { CALENDAR_STACK_SCREENS } from "../CalendarNavigator";
@@ -55,7 +56,7 @@ export const DayComponent = ({ date, state, marking, selectedView, navigation })
     // i.e. for flow it would be HEAVY/MEDIUM/LIGHT
     // for sleep it will be a number etc.
     let symptomAttribute = marking.symptoms ? marking.symptoms[viewKey] : null;
-
+    
     // If disabled
     if (marking.disable) {
       bgColor = FILTER_COLOURS.DISABLED;
@@ -229,5 +230,6 @@ const ICON_TYPES = {
   exercisewatersports: ExerciseWaterSportIcon,
   exercisewintersports: ExerciseWinterSportIcon,
   exerciseyoga: ExerciseYogaIcon,
+  ovulationovulating : OvulatingIcon,
   view: SafeAreaView,
 };

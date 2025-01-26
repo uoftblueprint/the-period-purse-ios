@@ -26,6 +26,7 @@ import ExerciseStrengthIcon from "../../../assets/icons/symptoms/exercise/exerci
 import ExerciseWaterSportIcon from "../../../assets/icons/symptoms/exercise/exercise-water-sports.svg";
 import ExerciseWinterSportIcon from "../../../assets/icons/symptoms/exercise/exercise-winter-sports.svg";
 import ExerciseYogaIcon from "../../../assets/icons/symptoms/exercise/exercise-yoga.svg";
+import OvulatingIcon from "../../../assets/icons/ovulation.svg";
 
 export {
   CrampsTerribleIcon,
@@ -56,4 +57,5 @@ export {
   ExerciseWaterSportIcon,
   ExerciseWinterSportIcon,
   ExerciseYogaIcon,
+  OvulatingIcon
 };
