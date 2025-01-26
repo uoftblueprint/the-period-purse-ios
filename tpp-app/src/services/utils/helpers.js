@@ -129,7 +129,7 @@ export const getSymptomsFromCalendar = (calendar, day, month, year) => {
           rawSymptoms.cramps,
           rawSymptoms.exercise,
           rawSymptoms.notes,
-          rawSymptoms.ovulating
+          rawSymptoms.ovulation
         )
       : new Symptoms();
   } else {

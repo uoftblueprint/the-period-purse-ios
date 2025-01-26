@@ -18,7 +18,7 @@ export const GETYearData = async (year) => {
       let parsedYear = yearObject.map((month) => {
         let parsedMonth = month.map((day) => {
           return day
-            ? new Symptoms(day["flow"], day["mood"], day["sleep"], day["cramps"], day["exercise"], day["notes"])
+            ? new Symptoms(day["flow"], day["mood"], day["sleep"], day["cramps"], day["exercise"], day["notes"], day["ovulation"])
             : new Symptoms();
         });
 

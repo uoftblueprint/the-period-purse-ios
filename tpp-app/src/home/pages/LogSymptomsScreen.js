@@ -169,7 +169,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
         setSleep(initSymps.sleep);
         setCramps(initSymps.cramps);
         setExercise(initSymps.exercise);
-        setIsOvulating(initSymps.ovulating);
+        setIsOvulating(initSymps.ovulation);
         setNotes(initSymps.notes);
 
         setSympFetch(false);
