@@ -192,7 +192,7 @@ const SettingsStackButton = (props) => {
         </Text>
         <View style={styles.containerElement}>
           <Icon
-            name="arrow-back-ios"
+            name="arrow-forward-ios"
             size={24}
             color="#5A9F93"
             style={styles.arrowBack}
@@ -369,7 +369,7 @@ const NotificationSettings = (props) => {
             </Text>
             <View style={styles.containerElement}>
               <Icon
-                name="arrow-back-ios"
+                name="arrow-forward-ios"
                 size={24}
                 color="#5A9F93"
                 style={styles.arrowBack}
@@ -438,14 +438,15 @@ const styles = StyleSheet.create({
     marginTop: 18,
   },
   containerElement: {
-    flex: 1,
+    flex: 0,
+    marginRight: 0,
   },
   preferences: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-evenly",
     padding: 10,
-    left: -20,
+    left: 20,
   },
   preferenceButton: {
     width: 50,
