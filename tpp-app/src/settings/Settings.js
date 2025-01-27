@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   arrowBack: {
-    
+    //removed transform
   },
   notificationSettingsView: {
     flexDirection: "row",
