@@ -36,6 +36,7 @@ export const GETAllTrackingPreferences = async () =>
         TRACK_SYMPTOMS.SLEEP,
         TRACK_SYMPTOMS.CRAMPS,
         TRACK_SYMPTOMS.EXERCISE,
+        TRACK_SYMPTOMS.OVULATION,
       ]).then((values) => {
         console.log("Got All Tracking Preferences");
         resolve(values);

@@ -47,6 +47,10 @@ export const TRACK_SYMPTOMS = {
   OVULATION: "trackOvulation",
 };
 
+export const OVULATION = {
+  OVULATING: "Ovulating",
+}
+
 export const FILTER_COLOURS = {
   FLOW: {
     HEAVY: "#D42629",
@@ -73,6 +77,9 @@ export const FILTER_COLOURS = {
     MEDIUM: "#1A50A0",
     LIGHT: "#467CCD",
     LITTLE: "#92B8F0",
+  },
+  OVULATION: {
+    OVULATING: "#69DAC6",
   },
   DISABLED: "#EEEEEE",
   NOFILTER: "#FFFFFF",
@@ -105,6 +112,9 @@ export const FILTER_TEXT_COLOURS = {
     LIGHT: "#FFF",
     LITTLE: "#000",
   },
+  OVULATION:{
+    OVULATING: "#000",
+  }, 
   DISABLED: "#AAAAAA",
   NOFILTER: "#000000",
 };

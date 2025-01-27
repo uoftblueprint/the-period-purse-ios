@@ -44,10 +44,10 @@ const DateArrow = ({ onPress, isRight }) => {
   );
 };
 
-const symptoms = ["flow", "mood", "sleep", "cramps", "exercise", "notes"]; // order of symptom accordions
+const symptoms = ["flow", "ovulation", "mood", "sleep", "cramps", "exercise",  "notes"]; // order of symptom accordions
 
 export default function LogSymptomsScreen({ navigation, route }) {
-  const initialPrefs = ["notes"];
+  const initialPrefs = ["ovulation", "notes"];
   const [trackingPrefs, setPrefs] = useState(initialPrefs); // list of symptoms to track, default is always 'notes'
   const [loaded, setLoaded] = useState(false);
 
@@ -113,6 +113,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
   const [crampsStr, setCramps] = useState(null);
   const [exerciseObj, setExercise] = useState(null);
   const [notesStr, setNotes] = useState(null);
+  const [isOvulating, setIsOvulating] = useState(null); // 'Ovulating' if true, null if false
 
   const [submitting, setSubmitting] = useState(false);
   const [isDirty, setDirty] = useState(false); // if there are changes to submit
@@ -140,6 +141,10 @@ export default function LogSymptomsScreen({ navigation, route }) {
       state: exerciseObj,
       setState: setExercise,
     },
+    ovulation: {
+      state: isOvulating,
+      setState: setIsOvulating,
+      }, 
     notes: {
       state: notesStr,
       setState: setNotes,
@@ -164,6 +169,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
         setSleep(initSymps.sleep);
         setCramps(initSymps.cramps);
         setExercise(initSymps.exercise);
+        setIsOvulating(initSymps.ovulation);
         setNotes(initSymps.notes);
 
         setSympFetch(false);
@@ -205,13 +211,13 @@ export default function LogSymptomsScreen({ navigation, route }) {
     if (typeof notesStr === "string" && notesStr.length <= 0) {
       setNotes(null);
     }
-  }, [flowStr, moodStr, sleepMins, crampsStr, exerciseObj, notesStr]);
+  }, [flowStr, moodStr, sleepMins, crampsStr, exerciseObj, isOvulating, notesStr]);
 
   // POST symptoms and close screen when submitting is true
   useEffect(() => {
     if (!submitting) return;
 
-    let finalSymps = new Symptoms(flowStr, moodStr, sleepMins, crampsStr, exerciseObj, notesStr);
+    let finalSymps = new Symptoms(flowStr, moodStr, sleepMins, crampsStr, exerciseObj, notesStr, isOvulating);
     // If all symptoms are null, POST null instead of an empty Symptom object
     let notEmpty = Object.values(finalSymps).some((symptom) => symptom !== null);
     let submitSymp = notEmpty ? finalSymps : new Symptoms();
@@ -313,7 +319,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
             >
               <CloseIcon fill={"#000000"} />
             </TouchableOpacity>
-
+            
             {/* SWITCH AND DISPLAY DATE */}
             <View style={styles.switchDate}>
               {isNewDayValid(false, selectedDate) ? (

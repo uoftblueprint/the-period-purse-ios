@@ -128,7 +128,8 @@ export const getSymptomsFromCalendar = (calendar, day, month, year) => {
           rawSymptoms.sleep,
           rawSymptoms.cramps,
           rawSymptoms.exercise,
-          rawSymptoms.notes
+          rawSymptoms.notes,
+          rawSymptoms.ovulation
         )
       : new Symptoms();
   } else {
