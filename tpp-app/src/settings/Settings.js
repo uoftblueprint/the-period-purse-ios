@@ -439,14 +439,13 @@ const styles = StyleSheet.create({
   },
   containerElement: {
     flex: 0,
-    marginRight: 0,
   },
   preferences: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-evenly",
     padding: 10,
-    left: 20,
+    left: -20,
   },
   preferenceButton: {
     width: 50,
@@ -515,7 +514,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   arrowBack: {
-    transform: [{ rotateY: "180deg" }],
+    
   },
   notificationSettingsView: {
     flexDirection: "row",
