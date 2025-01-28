@@ -112,3 +112,63 @@ export const LogMultipleDayPeriod = async (datesToMark, datesToUnmark) => {
     }
   }
 };
+
+/**
+ * Updates user's ovulation status on selected days.
+ * @param {Array<date>} datesToMark
+ * @param {Array<date>} datesToUnmark
+ * where date.day is a number (1st day of month = 1),
+ * date.month is a number (January = 1),
+ * date.year is a number.
+ */
+export const LogMultipleDayOvulation = async (datesToMark, datesToUnmark) => {
+  // run this code for each value in the dates array
+  if (datesToMark.length + datesToUnmark.length > 0) {
+    try {
+      const allDates = datesToMark.concat(datesToUnmark);
+      const curYear = parseInt(allDates[0].year);
+      const calendarData = await getCalendarByYear(curYear);
+
+      allDates.map((date, index) => {
+        const year = date.year;
+        const month = date.month;
+        const day = date.day;
+        try {
+          // initialize years that are not in the data
+          if (!calendarData[year]) {
+            calendarData[year] = initializeEmptyYear(year);
+          }
+
+          let symptoms = getSymptomsFromCalendar(calendarData, day, month, year);
+
+          // Need to mark the date with ovulation
+          if (index < datesToMark.length) {
+            symptoms.ovulation = true;
+          }
+
+          // Need to unmark the date with no ovulation
+          else if (datesToMark.length <= index) {
+            symptoms.ovulation = null;
+          }
+
+          calendarData[year][month - 1][day - 1] = symptoms;
+        } catch (error) {
+          console.log(error);
+        }
+      });
+
+      for (const [key, value] of Object.entries(calendarData)) {
+        if (value) {
+          try {
+            await AsyncStorage.setItem(key.toString(), JSON.stringify(value));
+          } catch (error) {
+            console.log(`LogMultipleDayOvulation error: ${JSON.stringify(error)}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.log("error with multiselect:", error);
+      errorAlertModal();
+    }
+  }
+};

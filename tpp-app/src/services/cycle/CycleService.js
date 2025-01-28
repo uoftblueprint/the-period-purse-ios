@@ -509,6 +509,39 @@ const CycleService = {
         return differenceInDays(nextPredictedOvulation, today);
       }
 
+      // Set notification if enabled
+      if (await GETRemindOvulation()) {
+        const freq = await GETRemindOvulationFreq();
+        const time = await GETRemindOvulationTime();
+      
+        // Parsing
+        const daysAhead = parseInt(freq);
+        const hour = time.split(" ")[0].split(":")[0];
+        const amOrPm = time.split(" ")[1];
+        let remindPeriodTime;
+        if (amOrPm === "PM" && hour !== "12") {
+          // add 12 hours
+          remindPeriodTime = JSON.stringify(parseInt(hour) + 12) + ":00";
+        } else if (hour === "12") {
+          remindPeriodTime = "0:00";
+        } else {
+          remindPeriodTime = hour + ":00";
+        }
+      
+        // "0:00 - 24:00"
+      
+        // notification scheduling
+        PushNotificationIOS.removePendingNotificationRequests(['remindovulation'])
+        PushNotificationIOS.addNotificationRequest({
+          id: 'remindperiod',
+          title: 'Period Reminder!',
+          body: `Your ovulation is predicted to come in ${daysAhead} days.`,
+          badge: 1,
+          fireDate: getCorrectDate((daysUntilOvulation - daysAhead), remindOvulationTime),
+          repeats: true
+        });
+      }
+
       return daysUntilOvulation;
     } catch (e) {
       console.log(e);

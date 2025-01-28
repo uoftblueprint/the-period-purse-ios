@@ -17,6 +17,10 @@ import {
   GETRemindLogSymptomsTime,
   POSTRemindLogSymptoms,
   POSTUpdateOnePreference,
+  GETRemindOvulation,
+  GETRemindOvulationFreq,
+  GETRemindOvulationTime,
+  POSTRemindOvulation,
 } from "../services/SettingsService";
 import { TRACK_SYMPTOMS, VIEWS } from "../services/utils/constants";
 import CycleService from "../services/cycle/CycleService";
@@ -193,12 +197,19 @@ const NotificationSettings = (props) => {
   // needed for Settings Page
   const [remindPeriodEnabled, setRemindPeriodEnabled] = useState(false);
   const [remindSymptomsEnabled, setRemindSymptomsEnabled] = useState(false);
+  const [remindOvulationEnabled, setRemindOvulationEnabled] = useState(false);
   const [numberOfDaysUntilPeriod, setNumberOfDaysUntilPeriod] = useState(0);
+  const [setNumberOfDaysUntilOvulation, setDaysTillOvulation] = useState(0);
+  
 
   // needed for Notification Page
   const [remindSymptomsFreq, setRemindSymptomsFreq] = useState("Every day");
   const [remindSymptomsTime, setRemindSymptomsTime] = useState("10:00");
   const [remindSymptomsTimeMeridian, setRemindSymptomsTimeMeridian] = useState("AM");
+
+  const [remindOvulationFreq, setRemindOvulationFreq] = useState("7");
+  const [remindOvulationTime, setRemindOvulationTime] = useState("10:00");
+  const [remindOvulationTimeMeridian, setRemindOvulationTimeMeridian] = useState("AM");
 
   // get the days until period
   useFocusEffect(

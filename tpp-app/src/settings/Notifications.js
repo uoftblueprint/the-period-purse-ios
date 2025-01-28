@@ -11,6 +11,8 @@ import {
   GETRemindLogSymptomsFreq,
   GETRemindLogPeriodTime,
   GETRemindLogSymptomsTime,
+  GETRemindOvulationFreq,
+  GETRemindOvulationTime,
 } from "../services/SettingsService";
 import { BackButtonContainer } from "../onboarding/components/ContainerComponents";
 import { STACK_SCREENS } from "./SettingsNavigator";
@@ -22,6 +24,9 @@ export default function Notifications({ navigation }) {
   const [remindSymptomsFreq, setRemindSymptomsFreq] = useState("Every day");
   const [remindSymptomsTime, setRemindSymptomsTime] = useState("10:00");
   const [remindSymptomsTimeMeridian, setRemindSymptomsTimeMeridian] = useState("AM");
+  const [remindOvulationFreq, setRemindOvulationFreq] = useState("7");
+  const [remindOvulationTime, setRemindOvulationTime] = useState("10:00");
+  const [remindOvulationTimeMeridian, setRemindOvulationTimeMeridian] = useState("AM");
 
   // Retrieve previously stored information from the database if it exists
   useEffect(() => {
@@ -30,6 +35,8 @@ export default function Notifications({ navigation }) {
       let storedSymptomFreq = await GETRemindLogSymptomsFreq();
       let storedPeriodTime = await GETRemindLogPeriodTime();
       let storedSymptomTime = await GETRemindLogSymptomsTime();
+      let storedOvulationFreq = await GETRemindOvulationFreq();
+      let storedOvulationTime = await GETRemindOvulationTime();
 
       if (storedPeriodFreq) {
         setRemindPeriodFreq(storedPeriodFreq);
@@ -37,6 +44,15 @@ export default function Notifications({ navigation }) {
 
       if (storedSymptomFreq) {
         setRemindSymptomsFreq(storedSymptomFreq);
+      }
+      if (storedOvulationFreq) {
+        setRemindOvulationFreq(storedOvulationFreq);
+      }
+
+      if (storedPeriodTime) {
+        let parsedTime = storedPeriodTime.split(" ");
+        setRemindPeriodTime(parsedTime[0]);
+        setRemindPeriodTimeMeridian(parsedTime[1]);
       }
 
       if (storedPeriodTime) {
@@ -71,6 +87,9 @@ export default function Notifications({ navigation }) {
                       remindSymptomsTime: remindSymptomsTime,
                       remindPeriodTimeMeridian: remindPeriodTimeMeridian,
                       remindSymptomsTimeMeridian: remindSymptomsTimeMeridian,
+                      remindOvulationFreq: remindOvulationFreq,
+                      remindOvulationTime: remindOvulationTime,
+                      remindOvulationTimeMeridian: remindOvulationTimeMeridian,
                     });
                   }}
                 />
@@ -135,6 +154,45 @@ export default function Notifications({ navigation }) {
                   borderBottomWidth: 1,
                 }}
               />
+
+              <NotificationStack
+                name={"Remind me of my next ovulation"}
+                header={"We'll remind you when you're next ovulating."}
+              />
+              <View
+                style={{
+                  borderBottomColor: "#CFCFCF",
+                  borderBottomWidth: 1,
+                }}
+              />
+              <NotificationAccordion
+                title={"Remind Before"}
+                selectedText={remindOvulationFreq}
+                setSelectedText={setRemindOvulationFreq}
+                type={"days"}
+              />
+              <View
+                style={{
+                  borderBottomColor: "#CFCFCF",
+                  borderBottomWidth: 1,
+                }}
+              />
+              <NotificationAccordion
+                title={"Reminder time"}
+                selectedText={`${remindOvulationTime} ${remindOvulationTimeMeridian}`}
+                time={remindOvulationTime}
+                meridian={remindOvulationTimeMeridian}
+                setTime={setRemindOvulationTime}
+                setTimeMeridian={setRemindOvulationTimeMeridian}
+                type={"ovulationTime"}
+              />
+              <View
+                style={{
+                  borderBottomColor: "#CFCFCF",
+                  borderBottomWidth: 1,
+                }}
+              />
+
             </View>
           </SafeAreaView>
         </ScrollView>
