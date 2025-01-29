@@ -15,10 +15,13 @@ import OnboardingBackground from "../../../assets/SplashScreenBackground/colourw
 import LoadingVisual from "../components/LoadingVisual";
 import { GETTutorial } from "../../services/TutorialService";
 import LegendButton from "../../../assets/icons/legend_icon.svg";
+import { addDays } from 'date-fns';
+import CycleService from '../../services/cycle/CycleService';
+import { calculateAverageOvulationLength } from '../../services/CalculationService';
 
 export let scrollDate = getISODate(new Date());
 
-export const Calendar = ({ navigation, marked, setYearInView, selectedView, route }) => {
+export const Calendar = ({ navigation, marked, setYearInView, selectedView, route, ovulationDates }) => {
   const jumpDate = route.params?.newDate ? route.params.newDate : getISODate(new Date());
   let joinedDate = "";
   GETJoinedDate().then((res) => {
@@ -32,7 +35,7 @@ export const Calendar = ({ navigation, marked, setYearInView, selectedView, rout
       // Max amount of months allowed to scroll to the past. Default = 50
       pastScrollRange={pastScroll}
       // Max amount of months allowed to scroll to the future. Default = 50
-      futureScrollRange={jumpDate.slice(8, 10) === "01" ? 1 : 0}
+      futureScrollRange={2}
       // Enable or disable scrolling of calendar list
       scrollEnabled={true}
       // Check which months are currently in view
@@ -85,7 +88,11 @@ export const Calendar = ({ navigation, marked, setYearInView, selectedView, rout
           },
         },
       }}
-      markedDates={marked}
+      markingType={'period'}
+      markedDates={{
+        ...marked,
+        ...ovulationDates
+      }}
     />
   );
 };
@@ -99,6 +106,7 @@ export default function CalendarScreen({ route, navigation }) {
   const [cachedYears, setCachedYears] = useState({});
   const [marked, setMarked] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [ovulationDates, setOvulationDates] = useState({});
 
   useEffect(() => {
     async function fetchYearData() {
@@ -188,6 +196,36 @@ export default function CalendarScreen({ route, navigation }) {
   ) : (
     <Icon name="keyboard-arrow-down" size={24} />
   );
+
+  const getOvulationDates = async () => {
+    try {
+      const daysTillOvulation = await CycleService.GETPredictedDaysTillOvulation();
+      const today = new Date();
+      
+      if (daysTillOvulation && daysTillOvulation > 0) {
+        const ovulationDate = addDays(today, daysTillOvulation);
+        const markedDates = {};
+        
+        const ovulationLength = calculateAverageOvulationLength() || 5;
+        
+        // Mark window for current ovulation
+        for (let i = 0; i < ovulationLength; i++) {
+          const dateToMark = addDays(ovulationDate, i);
+          markedDates[dateToMark.toISOString().split('T')[0]] = {
+          };
+        }
+        
+        setOvulationDates(markedDates);
+      }
+    } catch (error) {
+      console.error('Error getting ovulation dates:', error);
+    }
+  };
+
+  useEffect(() => {
+    getOvulationDates();
+  }, []);
+
   if (loaded) {
     return (
       <ErrorFallback>
@@ -223,6 +261,7 @@ export default function CalendarScreen({ route, navigation }) {
                 setYearInView={setYearInView}
                 selectedView={selectedView}
                 route={route}
+                ovulationDates={ovulationDates}
               />
             </View>
           </SafeAreaView>
