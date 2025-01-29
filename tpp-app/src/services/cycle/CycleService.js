@@ -489,64 +489,32 @@ const CycleService = {
     try {
       const today = new Date();
       const lastPeriodStart = await this.GETMostRecentPeriodStartDate();
-      const nextPeriodStart = await this.GETPredictedDaysTillPeriod(); // Days until next period
+      const daysUntilNextPeriod = await this.GETPredictedDaysTillPeriod(); 
       
-      if (!lastPeriodStart) {
-        // If no last period date is found, default to 14 days, maybe? 
-        return 14;
+      if (!lastPeriodStart || daysUntilNextPeriod === -1) {
+        console.log('No period data available for ovulation prediction');
+        return null;
       }
-      const periodToOvulationDifference = await this.GETOvulationPeriodDifference();
-      if (!periodToOvulationDifference) {
-        let periodToOvulationDifference = 14; // Default value
-      }
+
+      // Default to 14 days after period start if no other data available
+      const periodToOvulationDifference = 14;
+      
       const predictedOvulationDate = addDays(lastPeriodStart, periodToOvulationDifference);
       const daysUntilOvulation = differenceInDays(predictedOvulationDate, today);
 
       if (daysUntilOvulation < 0) {
-        // If predicted date has passed, calculate for the next cycle
-        const nextCycleStart = addDays(nextPeriodStart, periodToOvulationDifference);
-        const nextPredictedOvulation = addDays(nextCycleStart, Keys.AVERAGE_PERIOD_LENGTH);
-        return differenceInDays(nextPredictedOvulation, today);
+        // If predicted date has passed, calculate for next cycle
+        const nextPeriodStart = addDays(today, daysUntilNextPeriod);
+        const nextOvulationDate = addDays(nextPeriodStart, periodToOvulationDifference);
+        return differenceInDays(nextOvulationDate, today);
       }
 
-      // Set notification if enabled
-      if (await GETRemindOvulation()) {
-        const freq = await GETRemindOvulationFreq();
-        const time = await GETRemindOvulationTime();
-      
-        // Parsing
-        const daysAhead = parseInt(freq);
-        const hour = time.split(" ")[0].split(":")[0];
-        const amOrPm = time.split(" ")[1];
-        let remindPeriodTime;
-        if (amOrPm === "PM" && hour !== "12") {
-          // add 12 hours
-          remindPeriodTime = JSON.stringify(parseInt(hour) + 12) + ":00";
-        } else if (hour === "12") {
-          remindPeriodTime = "0:00";
-        } else {
-          remindPeriodTime = hour + ":00";
-        }
-      
-        // "0:00 - 24:00"
-      
-        // notification scheduling
-        PushNotificationIOS.removePendingNotificationRequests(['remindovulation'])
-        PushNotificationIOS.addNotificationRequest({
-          id: 'remindperiod',
-          title: 'Period Reminder!',
-          body: `Your ovulation is predicted to come in ${daysAhead} days.`,
-          badge: 1,
-          fireDate: getCorrectDate((daysUntilOvulation - daysAhead), remindOvulationTime),
-          repeats: true
-        });
-      }
-
+      console.log('Predicted days until ovulation:', daysUntilOvulation);
       return daysUntilOvulation;
+
     } catch (e) {
-      console.log(e);
-      errorAlertModal();
-      return -1; // Indicates an error occurred
+      console.error('Error predicting ovulation:', e);
+      return null;
     }
   },
 };
