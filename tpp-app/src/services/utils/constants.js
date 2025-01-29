@@ -153,6 +153,9 @@ export const REMINDERS = {
   LOG_PERIOD_TIME: "remindLogPeriodTime",
   LOG_SYMPTOMS_DAYS: "remindLogSymptomsDays",
   LOG_SYMPTOMS_TIME: "remindLogSymptomsTime",
+  REMIND_OVULATION: "remindOvulation",
+  OVULATION_DAYS: "remindOvulationDays",
+  OVULATION_TIME: "remindOvulationTime",
 };
 
 export const LOG_PERIOD_FREQ = {

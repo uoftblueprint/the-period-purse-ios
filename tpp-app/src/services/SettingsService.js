@@ -3,6 +3,7 @@ import { TRACK_SYMPTOMS, REMINDERS } from "./utils/constants";
 import { errorAlertModal } from "../error/errorAlertModal";
 import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { getCorrectDate } from "./utils/helpers";
+import CycleService from "./cycle/CycleService";
 
 /**
  * Clears all of the user's account data
@@ -380,30 +381,68 @@ export const GETRemindLogSymptomsTime = async () =>
     }
   });
 
-  /**
- * Posts whether the user wants a reminder to log ovulation.
- * @param {boolean} enableRemind representing whether the user wants to a remind to log ovulation
+export const GETDaysTillOvulation = async () => {
+  try {
+    // Add debug logging
+    console.log('CycleService availability:', !!CycleService);
+    if (!CycleService || !CycleService.GETPredictedDaysTillOvulation) {
+      console.error('CycleService or prediction method not available');
+      return null;
+    }
+    
+    const daysTillOvulation = await CycleService.GETPredictedDaysTillOvulation();
+    console.log('Predicted days till ovulation:', daysTillOvulation);
+    return daysTillOvulation;
+  } catch (error) {
+    console.error('Error getting days till ovulation:', error);
+    return null;
+  }
+};
+
+/**
+ * Posts whether the user wants a reminder to log period symptoms
+ * @param {boolean} enableRemind representing whether the user wants to a remind to log period symptoms
  * @returns a promise resolving when the post operation is complete
  */
 export const POSTRemindOvulation = async (enableRemind) =>
   new Promise(async (resolve, reject) => {
     try {
-      AsyncStorage.setItem(
+      console.log('Attempting to save ovulation reminder setting:', enableRemind);
+      
+      await AsyncStorage.setItem(
         REMINDERS.REMIND_OVULATION,
         JSON.stringify(enableRemind)
-      ).then(async () => {
-        console.log("Posted period symptom logging reminder", enableRemind);
+      );
+      
+      console.log('Successfully saved ovulation reminder setting');
 
-        // If enabled, re-schedule notifications
-        if (enableRemind) {
-          const daysTillOvulation = await GETDaysTillOvulation();
-          const remindLogSymptomsTime = await GETRemindOvulationTime();
-          const remindLogSymptomsFreq = await GETRemindOvulationFreq();
+      // If enabled, re-schedule notifications
+      if (enableRemind) {
+        try {
+          const remindOvulationTime = await GETRemindOvulationTime();
+          const remindOvulationFreq = await GETRemindOvulationFreq();
+          
+          console.log('Notification settings:', {
+            time: remindOvulationTime,
+            freq: remindOvulationFreq
+          });
+          
+          if (!remindOvulationTime || !remindOvulationFreq) {
+            console.log('Missing required notification settings');
+            // Set default values if missing
+            if (!remindOvulationTime) {
+              await POSTRemindOvulationTime("10:00 AM");
+            }
+            if (!remindOvulationFreq) {
+              await POSTRemindOvulationFreq("7");
+            }
+            return resolve();
+          }
+
           const hour = remindOvulationTime.split(" ")[0].split(":")[0];
           const amOrPm = remindOvulationTime.split(" ")[1];
           let remindTime;
           if (amOrPm === "PM" && hour !== "12") {
-            // add 12 hours
             remindTime = JSON.stringify(parseInt(hour) + 12) + ":00";
           } else if (hour === "12") {
             remindTime = "0:00";
@@ -411,39 +450,64 @@ export const POSTRemindOvulation = async (enableRemind) =>
             remindTime = hour + ":00";
           }
 
-          PushNotificationIOS.removePendingNotificationRequests([
-            "remindovulation",
-          ]);
+          console.log('Calculated remind time:', remindTime);
 
-          switch (remindOvulationFreq) {
-            case "Every day" || "Every week" || "Every month":
-              PushNotificationIOS.addNotificationRequest({
-                id: "remindoculation",
-                title: "Daily OV Reminder",
-                body: "Your Ovulation is " + daysTillOvulation + " days away!",
-                badge: 1,
-                fireDate: getCorrectDate(1, remindTime),
-                repeats: true,
-                repeatsComponent: {
-                  hour: true,
-                  minute: true,
-                },
-              });
-              break;
-            default:
-              break;
+          // Remove existing notifications first
+          await PushNotificationIOS.removePendingNotificationRequests(["remindovulation"]);
+
+          // Get predicted days till ovulation
+          const daysTillOvulation = await GETDaysTillOvulation();
+          console.log('Days till ovulation:', daysTillOvulation);
+          
+          // Only schedule if we have a valid prediction
+          if (daysTillOvulation) {
+            // Schedule notification for X days before ovulation
+            const daysBeforeOvulation = parseInt(remindOvulationFreq, 10);
+            const notificationDate = daysTillOvulation - daysBeforeOvulation;
+            
+            console.log('Notification calculation:', {
+              daysBeforeOvulation,
+              notificationDate,
+              fireDate: getCorrectDate(notificationDate, remindTime)
+            });
+            
+            if (notificationDate > 0) {
+              try {
+                await PushNotificationIOS.requestPermissions();
+                
+                await PushNotificationIOS.addNotificationRequest({
+                  id: "remindovulation", 
+                  title: "Ovulation Reminder",
+                  body: "Your predicted ovulation is in " + daysBeforeOvulation + " days!",
+                  badge: 1,
+                  fireDate: getCorrectDate(notificationDate, remindTime),
+                  repeats: false
+                });
+                
+                console.log('Successfully scheduled notification');
+              } catch (permError) {
+                console.error('Permission or scheduling error:', permError);
+              }
+            } else {
+              console.log('Notification date is not in the future:', notificationDate);
+            }
+          } else {
+            console.log('No valid ovulation prediction available');
           }
-        } else {
-          PushNotificationIOS.removePendingNotificationRequests([
-            "remindovulation",
-          ]);
+
+        } catch (notificationError) {
+          console.error('Error scheduling notification:', notificationError);
+          return resolve();
         }
-        resolve();
-      });
+      } else {
+        console.log('Removing existing notifications');
+        await PushNotificationIOS.removePendingNotificationRequests(["remindovulation"]);
+      }
+      resolve();
     } catch (e) {
-      console.log(`POSTRemindOvulation error: ${JSON.stringify(e)}`);
+      console.error('POSTRemindOvulation error:', e);
       errorAlertModal();
-      reject();
+      reject(e);
     }
   });
 
@@ -476,9 +540,10 @@ export const GETRemindOvulation = async () =>
 export const POSTRemindOvulationFreq = async (advanceDays) =>
   new Promise(async (resolve, reject) => {
     try {
-      AsyncStorage.setItem(REMINDERS.OVULATION_DAYS, advanceDays).then(() => {
+      const parsedDays = parseInt(advanceDays, 10);
+      AsyncStorage.setItem(REMINDERS.OVULATION_DAYS, JSON.stringify(parsedDays)).then(() => {
         console.log(
-          "Posted the number of days in advance to send ovulatoin reminder"
+          "Posted the number of days in advance to send ovulation reminder"
         );
         resolve();
       });
@@ -490,17 +555,18 @@ export const POSTRemindOvulationFreq = async (advanceDays) =>
   });
 
 /**
- * Retrieves the frequency to send log period reminders
- * @returns a promise resolving in a string representing the number of days
+ * Retrieves the frequency to send ovulation reminders
+ * @returns a promise resolving in a number representing the number of days
  */
 export const GETRemindOvulationFreq = async () =>
   new Promise(async (resolve, reject) => {
     try {
-      await AsyncStorage.getItem(REMINDERS.LOG_PERIOD_DAYS).then((value) => {
+      await AsyncStorage.getItem(REMINDERS.OVULATION_DAYS).then((value) => {
+        const parsedValue = JSON.parse(value);
         console.log(
           "Retrieved the number of days in advance to send ovulation reminder"
         );
-        resolve(value);
+        resolve(parsedValue);
       });
     } catch (e) {
       console.log(`GETRemindOvulationFreq error: ${JSON.stringify(e)}`);

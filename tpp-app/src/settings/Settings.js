@@ -27,6 +27,7 @@ import CycleService from "../services/cycle/CycleService";
 import { useFocusEffect } from "@react-navigation/native";
 import { STACK_SCREENS } from "./SettingsNavigator.js";
 import ErrorFallback from "../error/error-boundary";
+import { use } from "react";
 
 const PreferenceButton = (props) => {
   return (
@@ -62,7 +63,8 @@ const Preferences = (props) => {
       let stored = await GETAllTrackingPreferences();
       // set trackingPrefs somewhere
       for (let pref of stored) {
-        let toTrack = pref[1].toLowerCase() === "true";
+        // Modify the following line to handle boolean values
+        let toTrack = typeof pref[1] === "string" ? pref[1].toLowerCase() === "true" : pref[1] === true;
         // if tracking that symptom is set to true, append it to trackingPrefs
         if (toTrack) {
           let title = pref[0];
@@ -90,7 +92,7 @@ const Preferences = (props) => {
               break;
             case TRACK_SYMPTOMS.OVULATION:
               symptom = "ovulation";
-              trackOvulation(OVULATION);
+              trackOvulation(TEAL);
               break;
             default:
               break;
@@ -199,7 +201,7 @@ const NotificationSettings = (props) => {
   const [remindSymptomsEnabled, setRemindSymptomsEnabled] = useState(false);
   const [remindOvulationEnabled, setRemindOvulationEnabled] = useState(false);
   const [numberOfDaysUntilPeriod, setNumberOfDaysUntilPeriod] = useState(0);
-  const [setNumberOfDaysUntilOvulation, setDaysTillOvulation] = useState(0);
+  const [numberOfDaysUntilOvulation, setNumberOfDaysUntilOvulation] = useState(0);
   
 
   // needed for Notification Page
@@ -227,13 +229,14 @@ const NotificationSettings = (props) => {
             toSet = 0;
           }
           setNumberOfDaysUntilPeriod(toSet);
+          setNumberOfDaysUntilOvulation(toSet);
         })
         .catch(() => {
-          setDaysTillPeriod(0);
+          setNumberOfDaysUntilPeriod(0);
+          setNumberOfDaysUntilOvulation(0);
         });
     }, [])
   );
-
   useFocusEffect(
     useCallback(() => {
       if (props.route.params?.remindSymptomsFreq) setRemindSymptomsFreq(props.route.params?.remindSymptomsFreq);
@@ -280,6 +283,72 @@ const NotificationSettings = (props) => {
     getRemindSymptomsEnabled();
   }, []);
 
+  // get the days until period
+  useFocusEffect(
+    React.useCallback(() => {
+      GETRemindLogSymptoms().then((enabled) => {
+        setRemindSymptomsEnabled(enabled);
+      });
+
+      CycleService.GETPredictedDaysTillPeriod()
+        .then((numDays) => {
+          let toSet;
+          if (numDays && numDays != -1) {
+            toSet = numDays;
+          } else {
+            toSet = 0;
+          }
+          setNumberOfDaysUntilPeriod(toSet);
+        })
+        .catch(() => {
+          setNumberOfDaysUntilPeriod(0);
+        });
+    }, [])
+  );
+  useFocusEffect(
+    useCallback(() => {
+      if (props.route.params?.remindOvulationFreq) setRemindOvulationFreq(props.route.params?.remindOvulationFreq);
+      if (props.route.params?.remindOvulationTime) setRemindOvulationTime(props.route.params?.remindOvulationTime);
+      if (props.route.params?.remindOvulationTimeMeridian)
+        setRemindOvulationTimeMeridian(props.route.params?.remindOvulationTimeMeridian);
+
+      if (props.route.params?.remindOvulationFreq && props.route.params?.remindOvulationTime) {
+        console.log(234);
+        POSTRemindOvulation(remindOvulationEnabled);
+      }
+    }, [
+      props.route.params?.remindOvulationFreq,
+      props.route.params?.remindOvulationTime,
+    ])
+  );
+
+  // get the frequencies
+  useEffect(() => {
+    async function getRemindOvulationEnabled() {
+      let remindOvulation = await GETRemindOvulation();
+      console.log(318, typeof remindOvulation);
+      setRemindOvulationEnabled(remindOvulation);
+    }
+
+    async function getFreqTimes() {
+      let storedOvulationFreq = await GETRemindOvulationFreq();
+      let storedOvulationTime = await GETRemindOvulationTime();
+
+      if (storedOvulationFreq) {
+        setRemindOvulationFreq(storedOvulationFreq);
+      }
+
+      if (storedOvulationTime) {
+        let parsedTime = storedOvulationTime.split(" ");
+        setRemindOvulationTime(parsedTime[0]);
+        setRemindOvulationTimeMeridian(parsedTime[1]);
+      }
+    }
+
+    getFreqTimes();
+    getRemindOvulationEnabled();
+  }, []);
+
   // const togglePeriodSwitch = async () => {
   //     console.log(379, remindPeriodEnabled)
   //     POSTRemindLogPeriod(!remindPeriodEnabled)
@@ -295,6 +364,20 @@ const NotificationSettings = (props) => {
       setRemindSymptomsEnabled(!remindSymptomsEnabled);
     });
   };
+
+  const toggleOvulationSwitch = async () => {
+    try {
+      // post here
+      await POSTRemindOvulation(!remindOvulationEnabled);
+      console.log('New ovulation reminder state:', !remindOvulationEnabled);
+      setRemindOvulationEnabled(!remindOvulationEnabled);
+    } catch (error) {
+      console.error('Failed to toggle ovulation reminder:', error);
+      // Optionally show an error to the user
+      errorAlertModal();
+    }
+  };
+  
   return (
     <SafeAreaView style={{ top: "-5%" }}>
       <Text style={styles.heading}>Notifications</Text>
@@ -308,6 +391,12 @@ const NotificationSettings = (props) => {
         subtext={`${remindSymptomsFreq} at ${remindSymptomsTime + " " + remindSymptomsTimeMeridian}`}
         toggle={toggleSymptomsSwitch}
         enabled={remindSymptomsEnabled}
+      />
+      <NotificationsButton
+        text={"Remind me of my next ovulation"}
+        subtext={`${remindOvulationFreq} Days before Ovulation at ${remindOvulationTime + " " + remindOvulationTimeMeridian}`}
+        toggle={toggleOvulationSwitch}
+        enabled={remindOvulationEnabled}
       />
       <TouchableOpacity onPress={() => props.navigation.navigate(STACK_SCREENS.NOTIFICATIONS)}>
         <View>
@@ -329,6 +418,7 @@ const NotificationSettings = (props) => {
     </SafeAreaView>
   );
 };
+
 
 const SettingOptions = ({ navigation }) => {
   return (
@@ -516,3 +606,4 @@ const styles = StyleSheet.create({
     color: "#5A9F93",
   },
 });
+

@@ -22,7 +22,7 @@ const NotificationAccordion = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity ref={this.accordion} style={styles.dropDownTextBox} onPress={() => toggleExpand()}>
+      <TouchableOpacity style={styles.dropDownTextBox} onPress={() => toggleExpand()}>
         <Text style={styles.dropDownLeftText}>{props.title}</Text>
         <Text style={styles.dropDownRightText}>{props.selectedText}</Text>
         <Icon name={expanded ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={30} color={"#5A9F93"} />
@@ -73,17 +73,17 @@ const PickerTab = (props) => {
         />
       );
       break;
-      case "ovulationTime":
-        picker = (
-          <PeriodTimePicker
-            selectedText={props.selectedText}
-            time={props.time}
-            meridian={props.meridian}
-            setTime={props.setTime}
-            setTimeMeridian={props.setTimeMeridian}
-          />
-        );
-        break;
+    case "ovulationTime":
+      picker = (
+        <OvulationTimePicker
+          selectedText={props.selectedText}
+          time={props.time}
+          meridian={props.meridian}
+          setTime={props.setTime}
+          setTimeMeridian={props.setTimeMeridian}
+        />
+      );
+      break;
     case "days":
       picker = <SchedulingPicker selectedText={props.selectedText} setSelectedText={props.setSelectedText} />;
       break;
@@ -203,7 +203,7 @@ const PeriodTimePicker = (props) => {
   );
 };
 
-const ovulationTimePicker = (props) => {
+const OvulationTimePicker = (props) => {
   // var storedTime = "10:00"
   // var storedMeridian = "AM"
   // if (typeof props.selectedText == 'string'){
