@@ -13,7 +13,24 @@ import { errorAlertModal } from "../error/errorAlertModal";
  * @Mark use this for your prediction task.
  */
 export const calculateAverageOvulationLength = () => {
-  return 0;
+  // Ensure there are enough entries to calculate ovulation length
+  if (completeHistory.length < 2) return 0;
+  // Estimate ovulation as the midpoint of each cycle
+  const ovulationLengths = completeHistory
+    .map((interval, index) => {
+      if (index === 0) return 0; // Skip the first interval as we need a reference cycle
+      const previousCycleStart = completeHistory[index - 1].start;
+      const currentCycleStart = interval.start;
+      const cycleLength = getDaysDiffInclusive(previousCycleStart, currentCycleStart);
+      // Ovulation is assumed to occur roughly 14 days before the next cycle starts
+      return cycleLength - 14 > 0 ? cycleLength - 14 : 0;
+    })
+    .filter((length) => length > 0); // Filter out invalid lengths
+  // Calculate average ovulation length
+  return ovulationLengths.length > 0
+    ? ovulationLengths.reduce((sum, length) => sum + length, 0) / ovulationLengths.length
+    : 0;
+
 };
 
 /**
@@ -24,8 +41,8 @@ export const calculateAverageOvulationLength = () => {
 export const calculateAveragePeriodLength = (completeHistory) => {
   return completeHistory.length > 0
     ? completeHistory.reduce(function (sum, interval) {
-        return sum + interval.periodDays;
-      }, 0) / completeHistory.length
+      return sum + interval.periodDays;
+    }, 0) / completeHistory.length
     : 0;
 };
 
@@ -37,22 +54,22 @@ export const calculateAveragePeriodLength = (completeHistory) => {
 export const calculateAverageCycleLength = (completeHistory) => {
   return completeHistory.length - 1 > 0
     ? completeHistory
-        // Map to difference of days
-        .map((interval, index) => {
-          return index === 0 ? 0 : getDaysDiffInclusive(completeHistory[index - 1].start, interval.start) - 1;
-        })
-        // Remove 0th index
-        .slice(1)
-        // Find average
-        .reduce((sum, cycleDays) => {
-          return sum + cycleDays;
-        }, 0) /
-        (completeHistory.length - 1)
+      // Map to difference of days
+      .map((interval, index) => {
+        return index === 0 ? 0 : getDaysDiffInclusive(completeHistory[index - 1].start, interval.start) - 1;
+      })
+      // Remove 0th index
+      .slice(1)
+      // Find average
+      .reduce((sum, cycleDays) => {
+        return sum + cycleDays;
+      }, 0) /
+    (completeHistory.length - 1)
     : 0;
 };
 
 /**
- * Calculates and saves to AsyncStorage the average period length and average cycle length of the user.
+ * Calculates and saves to AsyncStorage the average period length, average cycle length, and average ovulation length of the user.
  */
 export const calculateAverages = async () =>
   new Promise(async (resolve, reject) => {
@@ -73,13 +90,17 @@ export const calculateAverages = async () =>
             // Use map and reduce to find average
             const averageCycleLength = calculateAverageCycleLength(completeHistory);
 
+            const averageOvulationPhaseLength = calculateAverageOvulationLength(completeHistory)
+
             AsyncStorage.multiSet([
               [KEYS.AVERAGE_CYCLE_LENGTH, JSON.stringify(averageCycleLength)],
               [KEYS.AVERAGE_PERIOD_LENGTH, JSON.stringify(averagePeriodLength)],
+              [KEYS.AVERAGE_OVULATION_PHASE_LENGTH, JSON.stringify(averageOvulationPhaseLength)]
             ])
               .then(() => {
                 console.log(`Recalculated ${KEYS.AVERAGE_PERIOD_LENGTH} as ${averagePeriodLength}`);
                 console.log(`Recalculated ${KEYS.AVERAGE_CYCLE_LENGTH} as ${averageCycleLength}`);
+                console.log(`Recalculated ${KEYS.AVERAGE_OVULATION_PHASE_LENGTH} as ${averageOvulationPhaseLength}`);
                 resolve();
               })
               .catch((error) => {

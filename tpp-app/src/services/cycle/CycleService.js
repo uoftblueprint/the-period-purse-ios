@@ -244,6 +244,19 @@ const CycleService = {
       return null;
     }
   },
+  /**
+   * Get the user's average ovulation phase length
+   * @return {Promise} Resolves into either an integer for number of days or NULL if info is not present
+   */
+    GETAverageOvulationPhaseLength: async function () {
+      try {
+        const res = await AsyncStorage.getItem(Keys.AVERAGE_OVULATION_PHASE_LENGTH);
+        return res;
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
+    },
 
   /**
    * Get the number of days the user has been on their period

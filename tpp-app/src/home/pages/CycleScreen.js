@@ -8,6 +8,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "@react-navigation/native";
 import BloodDrop from "../../../assets/icons/flow_with_heart.svg";
 import Calendar from "../../../assets/icons/menstruation_calendar.svg";
+import Egg from "../../../assets/icons/egg.svg"
 import Paddy from "../../../assets/icons/paddy.svg";
 import { Footer } from "../../services/utils/footer";
 import LoadingVisual from "../components/LoadingVisual";
@@ -50,6 +51,7 @@ export default function CycleScreen({ navigation }) {
   const DEFAULTS = {
     AVG_PERIOD_LENGTH: 0,
     AVG_CYCLE_LENGTH: 0,
+    AVG_OVULATION_PHASE_LENGTH: 0,
     PERIOD_DAYS: 0,
     DAYS_SINCE_LAST_PERIOD: 0,
     CYCLE_DONUT_PERCENT: 0,
@@ -60,6 +62,7 @@ export default function CycleScreen({ navigation }) {
 
   let [avgPeriodLength, setAvgPeriodLength] = useState(DEFAULTS.AVG_PERIOD_LENGTH);
   let [avgCycleLength, setAvgCycleLength] = useState(DEFAULTS.AVG_CYCLE_LENGTH);
+  let [avgOvulationPhaseLength, setAvgOvulationPhaseLength] = useState(DEFAULTS.AVG_OVULATION_PHASE_LENGTH);
   let [periodDays, setPeriodDays] = useState(DEFAULTS.PERIOD_DAYS);
   let [daysSinceLastPeriod, setDaysSinceLastPeriod] = useState(DEFAULTS.DAYS_SINCE_LAST_PERIOD);
   let [cycleDonutPercent, setCycleDonutPercent] = useState(DEFAULTS.CYCLE_DONUT_PERCENT);
@@ -115,6 +118,18 @@ export default function CycleScreen({ navigation }) {
         })
         .catch(() => setAvgCycleLength(DEFAULTS.AVG_CYCLE_LENGTH));
 
+      let gettingAverageOvulationPhaseLength = CycleService.GETAverageOvulationPhaseLength()
+        .then((numDays) => {
+          if (numDays) {
+            // Round to one decimal place
+            setAvgOvulationPhaseLength(Math.round(numDays * 10) / 10);
+          } else {
+            setAvgOvulationPhaseLength(DEFAULTS.AVG_OVULATION_PHASE_LENGTH);
+          }
+        })
+        .catch(() => setAvgOvulationLength(DEFAULTS.AVG_OVULATION_PHASE_LENGTH));
+
+
       let gettingPredictedDays = CycleService.GETPredictedDaysTillPeriod()
         .then((numDays) => {
           let toSet;
@@ -147,7 +162,7 @@ export default function CycleScreen({ navigation }) {
         gettingPeriodEndDays,
         gettingAverageCycleLength,
         gettingAveragePeriodLength,
-        gettingAverageCycleLength,
+        gettingAverageOvulationPhaseLength,
         gettingPredictedDays,
         gettingCycleHistory
       ).then(() => {
@@ -196,6 +211,13 @@ export default function CycleScreen({ navigation }) {
                     <Calendar fill="red" style={styles.icon} />
                   </InfoCard>
                 </SafeAreaView>
+                {avgOvulationPhaseLength > 0 && (
+                  <SafeAreaView style={[styles.rowContainer, styles.infoCardContainer, styles.bottom_element]}>
+                    <InfoCard header="Average ovulation phase length" days={avgOvulationPhaseLength} backgroundColor="#B9E0D8">
+                      <Egg style={styles.icon} />
+                    </InfoCard>
+                  </SafeAreaView>
+                )}
                 <MinimizedHistoryCard navigation={navigation} intervals={intervals} onPeriod={periodDays != 0} />
                 <View style={{ marginBottom: 70 }}>
                   <Footer navigation={navigation} />
@@ -315,6 +337,10 @@ const styles = StyleSheet.create({
     marginRight: "15%",
   },
   element: {
-    marginVertical: "7%",
+    marginTop: "7%",
+    marginBottom: "3%"
   },
+  bottom_element: {
+    marginBottom: "7%",
+  }
 });
