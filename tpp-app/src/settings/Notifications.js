@@ -61,6 +61,12 @@ export default function Notifications({ navigation }) {
         setRemindPeriodTimeMeridian(parsedTime[1]);
       }
 
+      if (storedOvulationTime) {
+        let parsedTime = storedOvulationTime.split(" ");
+        setRemindOvulationTime(parsedTime[0]);
+        setRemindOvulationTimeMeridian(parsedTime[1]);
+      }
+
       if (storedSymptomTime) {
         let parsedTime = storedSymptomTime.split(" ");
         setRemindSymptomsTime(parsedTime[0]);

@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "ios": "npx expo run:ios",
-    "android": "npx expo run:android"
+    "android": "npx expo run:android",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@invertase/react-native-apple-authentication": "^2.4.0",
@@ -44,7 +47,27 @@
     "styled-components": "^5.3.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^12.9.0",
+    "jest": "^29.7.0"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "react-native",
+    "setupFiles": [
+      "./jest.setup.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|@react-native|@react-navigation)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
 }

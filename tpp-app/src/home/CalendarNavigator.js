@@ -7,6 +7,7 @@ import LogMultipleDatesScreen from "./pages/LogMultipleDatesScreen";
 import CycleHistoryScreen from "./pages/CycleHistoryScreen";
 import TutorialOverlay from "./pages/TutorialOverlay";
 import LegendScreen from "./pages/LegendScreen";
+import CalendarScreen from './pages/CalendarScreen';
 
 // Create a navigation stack that can be used to access other pages
 // Stack begins first page at CalendarScreen. This is done so that the global
@@ -14,15 +15,15 @@ import LegendScreen from "./pages/LegendScreen";
 const Stack = createNativeStackNavigator();
 
 export const CALENDAR_STACK_SCREENS = {
+  CALENDAR: 'Calendar',
   CYCLE_CALENDAR_TABS: "CycleCalendarTabs",
   SELECT_LOG_OPTION: "SelectLogOption",
   LOG_SYMPTOMS: "LogSymptoms",
   LOG_MULTIPLE_DATES: "LogMultipleDates",
-  CYCLE_HISTORY: "CycleHistoryScreen",
+  CYCLE_HISTORY: "CycleHistory",
   CYCLE_PAGE: "Cycle",
-  CALENDAR_PAGE: "Calendar",
-  TUTORIAL: "TutorialOverlay",
-  LEGEND_PAGE: "Legend",
+  TUTORIAL: "Tutorial",
+  LEGEND_PAGE: "LegendPage",
 };
 
 export default function CalendarNavigator() {
@@ -57,6 +58,7 @@ export default function CalendarNavigator() {
       />
       <Stack.Screen name={CALENDAR_STACK_SCREENS.CYCLE_HISTORY} component={CycleHistoryScreen} />
       <Stack.Screen name={CALENDAR_STACK_SCREENS.LEGEND_PAGE} component={LegendScreen} />
+      <Stack.Screen name={CALENDAR_STACK_SCREENS.CALENDAR} component={CalendarScreen} />
     </Stack.Navigator>
   );
 }
