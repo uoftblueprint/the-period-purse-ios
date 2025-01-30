@@ -199,25 +199,29 @@ export default function CalendarScreen({ route, navigation }) {
 
   const getOvulationDates = async () => {
     try {
+      // Only get ovulation dates if ovulation view is selected
+      if (selectedView !== VIEWS.Ovulation) {
+        setOvulationDates({});
+        return;
+      }
+
       const daysTillOvulation = await CycleService.GETPredictedDaysTillOvulation();
       const today = new Date();
-      
-      if (daysTillOvulation && daysTillOvulation > 0) {
-        const ovulationDate = addDays(today, daysTillOvulation);
-        const markedDates = {};
-        
-        const ovulationLength = calculateAverageOvulationLength() || 5;
-        
-        // Mark window for current ovulation
-        for (let i = 0; i < ovulationLength; i++) {
-          const dateToMark = addDays(ovulationDate, i);
+      const markedDates = {};
+      const ovulationLength = calculateAverageOvulationLength() || 5;
+
+      // Mark current ovulation if we're in it
+      if (daysTillOvulation <= 0 && daysTillOvulation >= -ovulationLength) {
+        const currentOvulationStart = addDays(today, daysTillOvulation);
+        for (let i = 0; i < ovulationLength + daysTillOvulation; i++) {
+          const dateToMark = addDays(currentOvulationStart, i);
           markedDates[dateToMark.toISOString().split('T')[0]] = {
             ovulation: true,
             disabled: true,
             customStyles: {
               container: {
                 borderRadius: 0,
-                backgroundColor: FILTER_COLOURS.OVULATION.PREDICTED_OVULATION
+                backgroundColor: '#C6F2F0',
               },
               text: {
                 color: 'white',
@@ -226,9 +230,32 @@ export default function CalendarScreen({ route, navigation }) {
             }
           };
         }
-        
-        setOvulationDates(markedDates);
       }
+      
+      // Mark next ovulation window if predicted
+      if (daysTillOvulation > 0) {
+        const nextOvulationDate = addDays(today, daysTillOvulation);
+        
+        for (let i = 0; i < ovulationLength; i++) {
+          const dateToMark = addDays(nextOvulationDate, i);
+          markedDates[dateToMark.toISOString().split('T')[0]] = {
+            ovulation: true,
+            disabled: true,
+            customStyles: {
+              container: {
+                borderRadius: 0,
+                backgroundColor: '#C6F2F0',
+              },
+              text: {
+                color: 'white',
+                fontWeight: '400'
+              }
+            }
+          };
+        }
+      }
+      
+      setOvulationDates(markedDates);
     } catch (error) {
       console.error('Error getting ovulation dates:', error);
     }
@@ -236,7 +263,7 @@ export default function CalendarScreen({ route, navigation }) {
 
   useEffect(() => {
     getOvulationDates();
-  }, []);
+  }, [selectedView]);
 
   if (loaded) {
     return (

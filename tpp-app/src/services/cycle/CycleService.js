@@ -509,9 +509,7 @@ const CycleService = {
         return differenceInDays(nextOvulationDate, today);
       }
 
-      console.log('Predicted days until ovulation:', daysUntilOvulation);
       return daysUntilOvulation;
-
     } catch (e) {
       console.error('Error predicting ovulation:', e);
       return null;
