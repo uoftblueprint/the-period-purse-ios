@@ -40,6 +40,7 @@ import { OvulatingIcon } from "../../services/utils/calendaricons";
 import { VIEWS } from "../../services/utils/constants";
 import { FILTER_COLOURS, FILTER_TEXT_COLOURS } from "../../services/utils/constants";
 import { CALENDAR_STACK_SCREENS } from "../CalendarNavigator";
+import { Filter } from "react-native-svg";
 
 // The component that is used by each day in the calendar
 export const DayComponent = ({ date, state, marking, selectedView, navigation }) => {
@@ -47,74 +48,107 @@ export const DayComponent = ({ date, state, marking, selectedView, navigation })
   let textColor;
   let iconName = "view";
   let renderedIcon;
+  let isDisabled = false;
 
-  // If this specific date has been marked
-  if (marking) {
-    // View key just tells us what the view is set to
-    let viewKey = getKeyByValue(VIEWS, selectedView).toLowerCase();
-    // Basically whatever special value that is attached to the specific key in the Symptoms object
-    // i.e. for flow it would be HEAVY/MEDIUM/LIGHT
-    // for sleep it will be a number etc.
-    let symptomAttribute = marking.symptoms ? marking.symptoms[viewKey] : null;
-    
-    // If disabled
-    if (marking.disable) {
-      bgColor = FILTER_COLOURS.DISABLED;
-      textColor = FILTER_TEXT_COLOURS.DISABLED;
-      // If it contains a working attribute
-    } else if (symptomAttribute) {
-      let attribute = symptomAttribute;
+  // Check if this is an ovulation date
+  const isOvulationDate = marking && marking.ovulation;
+  
+  if (isOvulationDate) {
+    // Set ovulation date styling
+    bgColor = FILTER_COLOURS.OVULATION.OVULATING; // Teal color
+    textColor = 'white';
+    isDisabled = true;  // Make it non-interactive
+  } else if (marking) {
+    // Handle predicted ovulation dates
+    if (marking.period) {
+      bgColor = FILTER_COLOURS.OVULATION.PREDICTED_OVULATION;
+      textColor = FILTER_TEXT_COLOURS.OVULATION.OVULATING;
+    } else {
+      // View key just tells us what the view is set to
+      let viewKey = getKeyByValue(VIEWS, selectedView).toLowerCase();
+      // Basically whatever special value that is attached to the specific key in the Symptoms object
+      // i.e. for flow it would be HEAVY/MEDIUM/LIGHT
+      // for sleep it will be a number etc.
+      let symptomAttribute = marking.symptoms ? marking.symptoms[viewKey] : null;
+      
+      // If disabled
+      if (marking.disable) {
+        bgColor = FILTER_COLOURS.DISABLED;
+        textColor = FILTER_TEXT_COLOURS.DISABLED;
+        // If it contains a working attribute
+      } else if (symptomAttribute) {
+        let attribute = symptomAttribute;
 
-      // Sleep and exercise have special cases to be calculated through
-      switch (viewKey) {
-        case "sleep":
-          attribute = filterSleep(attribute);
-          break;
-        case "exercise":
-          attribute = filterExercise(symptomAttribute.exercise_minutes);
-          if (symptomAttribute.exercise) {
-            iconName = viewKey + symptomAttribute.exercise.toLowerCase();
-            iconName = iconName.replace(/\s+/g, "");
-          }
+        // Sleep and exercise have special cases to be calculated through
+        switch (viewKey) {
+          case "sleep":
+            attribute = filterSleep(attribute);
+            break;
+          case "exercise":
+            attribute = filterExercise(symptomAttribute.exercise_minutes);
+            if (symptomAttribute.exercise) {
+              iconName = viewKey + symptomAttribute.exercise.toLowerCase();
+              iconName = iconName.replace(/\s+/g, "");
+            }
+            break;
+        }
 
-          break;
-      }
+        // Mood is the only one that does not modify the background colour
+        if (viewKey !== "mood") {
+          bgColor = FILTER_COLOURS[viewKey.toUpperCase()][attribute.toUpperCase()];
+          textColor = FILTER_TEXT_COLOURS[viewKey.toUpperCase()][attribute.toUpperCase()];
+        } else {
+          bgColor = FILTER_COLOURS.NOFILTER;
+          textColor = FILTER_TEXT_COLOURS.NOFILTER;
+        }
 
-      // Mood is the only one that does not modify the background colour
-      if (viewKey !== "mood") {
-        bgColor = FILTER_COLOURS[viewKey.toUpperCase()][attribute.toUpperCase()];
-        textColor = FILTER_TEXT_COLOURS[viewKey.toUpperCase()][attribute.toUpperCase()];
+        // Get Icon
+        if (viewKey !== "sleep" && viewKey !== "exercise") {
+          iconName = viewKey + symptomAttribute.toLowerCase();
+        }
+
+        renderedIcon = createElement(ICON_TYPES[iconName], {
+          style: styles.dayIcon,
+          width: ICON_SIZE.width,
+          height: ICON_SIZE.height,
+          fill: textColor,
+        });
       } else {
         bgColor = FILTER_COLOURS.NOFILTER;
         textColor = FILTER_TEXT_COLOURS.NOFILTER;
       }
-
-      // Get Icon
-      if (viewKey !== "sleep" && viewKey !== "exercise") {
-        iconName = viewKey + symptomAttribute.toLowerCase();
-      }
-
-      renderedIcon = createElement(ICON_TYPES[iconName], {
-        style: styles.dayIcon,
-        width: ICON_SIZE.width,
-        height: ICON_SIZE.height,
-        fill: textColor,
-      });
-    } else {
-      bgColor = FILTER_COLOURS.NOFILTER;
-      textColor = FILTER_TEXT_COLOURS.NOFILTER;
     }
   }
 
   return (
     <TouchableOpacity
-      disabled={bgColor === FILTER_COLOURS.DISABLED && textColor === FILTER_TEXT_COLOURS.DISABLED}
+      disabled={isDisabled || marking?.disable}
       onPress={() => {
-        navigation.navigate(CALENDAR_STACK_SCREENS.LOG_SYMPTOMS, { date: date });
+        if (!isDisabled && !marking?.disable) {
+          navigation.navigate(CALENDAR_STACK_SCREENS.LOG_SYMPTOMS, {
+            date: date,
+          });
+        }
       }}
     >
-      <View style={styles.dayContainer} backgroundColor={bgColor}>
-        <Text style={{ color: textColor }}>{date.day}</Text>
+      <View
+        style={[
+          styles.dayContainer,
+          {
+            backgroundColor: bgColor || FILTER_COLOURS.NOFILTER,
+          },
+        ]}
+      >
+        <Text
+          style={[
+            styles.dayText,
+            {
+              color: textColor || FILTER_TEXT_COLOURS.NOFILTER,
+            },
+          ]}
+        >
+          {date.day}
+        </Text>
         {renderedIcon}
       </View>
     </TouchableOpacity>
@@ -193,6 +227,10 @@ const styles = StyleSheet.create({
     left: -2,
     marginLeft: "auto",
     marginRight: "auto",
+  },
+  dayText: {
+    fontSize: 16,
+    fontWeight: '400',
   },
 });
 

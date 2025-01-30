@@ -166,8 +166,8 @@ export default function Notifications({ navigation }) {
                 }}
               />
               <NotificationAccordion
-                title={"Remind Before"}
-                selectedText={remindOvulationFreq}
+                title={"Remind Me"}
+                selectedText={remindOvulationFreq + " days before"}
                 setSelectedText={setRemindOvulationFreq}
                 type={"days"}
               />

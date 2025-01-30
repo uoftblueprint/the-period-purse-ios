@@ -212,6 +212,18 @@ export default function CalendarScreen({ route, navigation }) {
         for (let i = 0; i < ovulationLength; i++) {
           const dateToMark = addDays(ovulationDate, i);
           markedDates[dateToMark.toISOString().split('T')[0]] = {
+            ovulation: true,
+            disabled: true,
+            customStyles: {
+              container: {
+                borderRadius: 0,
+                backgroundColor: FILTER_COLOURS.OVULATION.PREDICTED_OVULATION
+              },
+              text: {
+                color: 'white',
+                fontWeight: '400'
+              }
+            }
           };
         }
         
