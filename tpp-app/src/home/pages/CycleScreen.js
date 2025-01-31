@@ -8,11 +8,14 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "@react-navigation/native";
 import BloodDrop from "../../../assets/icons/flow_with_heart.svg";
 import Calendar from "../../../assets/icons/menstruation_calendar.svg";
-import Egg from "../../../assets/icons/egg.svg"
+import Egg from "../../../assets/icons/egg.svg";
 import Paddy from "../../../assets/icons/paddy.svg";
 import { Footer } from "../../services/utils/footer";
 import LoadingVisual from "../components/LoadingVisual";
 import ErrorFallback from "../../error/error-boundary";
+import { GETAllTrackingPreferences } from "../../services/SettingsService";
+import { TRACK_SYMPTOMS } from "../../services/utils/constants";
+
 
 function InfoCard(props) {
   let DefaultText = <Text style={styles.messageForDefault}>Please start logging to learn more. </Text>;
@@ -70,6 +73,7 @@ export default function CycleScreen({ navigation }) {
   let [intervals, setIntervals] = useState(DEFAULTS.INTERVALS);
   let [showTip, setShowTip] = useState(DEFAULTS.SHOW_TIP);
   let [loaded, setLoaded] = useState(false);
+  let [isOvulationTracked, setIsOvulationTracked] = useState(false);
 
   const tabBarHeight = useBottomTabBarHeight();
 
@@ -94,12 +98,11 @@ export default function CycleScreen({ navigation }) {
         .then((days) => {
           setDaysSinceLastPeriod(days);
         })
-        .catch(setDaysSinceLastPeriod(DEFAULTS.DAYS_SINCE_LAST_PERIOD));
+        .catch(() => setDaysSinceLastPeriod(DEFAULTS.DAYS_SINCE_LAST_PERIOD));
 
       let gettingAveragePeriodLength = CycleService.GETAveragePeriodLength()
         .then((numDays) => {
           if (numDays) {
-            // Round to one decimal place
             setAvgPeriodLength(Math.round(numDays * 10) / 10);
           } else {
             setAvgPeriodLength(DEFAULTS.AVG_PERIOD_LENGTH);
@@ -110,7 +113,6 @@ export default function CycleScreen({ navigation }) {
       let gettingAverageCycleLength = CycleService.GETAverageCycleLength()
         .then((numDays) => {
           if (numDays) {
-            // Round to one decimal place
             setAvgCycleLength(Math.round(numDays * 10) / 10);
           } else {
             setAvgCycleLength(DEFAULTS.AVG_CYCLE_LENGTH);
@@ -121,14 +123,12 @@ export default function CycleScreen({ navigation }) {
       let gettingAverageOvulationPhaseLength = CycleService.GETAverageOvulationPhaseLength()
         .then((numDays) => {
           if (numDays) {
-            // Round to one decimal place
             setAvgOvulationPhaseLength(Math.round(numDays * 10) / 10);
           } else {
             setAvgOvulationPhaseLength(DEFAULTS.AVG_OVULATION_PHASE_LENGTH);
           }
         })
-        .catch(() => setAvgOvulationLength(DEFAULTS.AVG_OVULATION_PHASE_LENGTH));
-
+        .catch(() => setAvgOvulationPhaseLength(DEFAULTS.AVG_OVULATION_PHASE_LENGTH));
 
       let gettingPredictedDays = CycleService.GETPredictedDaysTillPeriod()
         .then((numDays) => {
@@ -137,9 +137,6 @@ export default function CycleScreen({ navigation }) {
             toSet = numDays;
           } else {
             toSet = DEFAULTS.DAYS_TILL_PERIOD;
-            //if the prediction is invalid, don't show the tooltip
-            //will not show tip until average cycle is computed
-            //  setShowTip(false);
           }
           setDaysTillPeriod(toSet);
         })
@@ -156,7 +153,20 @@ export default function CycleScreen({ navigation }) {
           setIntervals(DEFAULTS.INTERVALS);
         });
 
-      Promise.all(
+      let gettingTrackingPreferences = GETAllTrackingPreferences()
+        .then((values) => {
+          const ovulationTracking = values.find(([key]) => key === TRACK_SYMPTOMS.OVULATION);
+          if (ovulationTracking) {
+            setIsOvulationTracked(JSON.parse(ovulationTracking[1]));
+            console.log(JSON.parse(ovulationTracking[1]))
+          }
+        })
+        .catch(() => {
+          setIsOvulationTracked(false);
+          console.log("false")
+        });
+
+      Promise.all([
         gettingPeriod,
         gettingCycle,
         gettingPeriodEndDays,
@@ -164,8 +174,9 @@ export default function CycleScreen({ navigation }) {
         gettingAveragePeriodLength,
         gettingAverageOvulationPhaseLength,
         gettingPredictedDays,
-        gettingCycleHistory
-      ).then(() => {
+        gettingCycleHistory,
+        gettingTrackingPreferences,
+      ]).then(() => {
         setLoaded(true);
       });
     }, [])
@@ -188,9 +199,7 @@ export default function CycleScreen({ navigation }) {
       <ErrorFallback>
         <SafeAreaView style={styles.container}>
           <ImageBackground source={background} style={styles.container}>
-            {/* View that contains all the relevant cards */}
             <ScrollView>
-              {/* Period Notification (Period in X days) */}
               <SafeAreaView style={cardContainerStyle}>
                 {showTip && daysTillPeriod <= 7 && (
                   <PeriodNotification daysTillPeriod={daysTillPeriod}>
@@ -211,9 +220,9 @@ export default function CycleScreen({ navigation }) {
                     <Calendar fill="red" style={styles.icon} />
                   </InfoCard>
                 </SafeAreaView>
-                {avgOvulationPhaseLength > 0 && (
+                {isOvulationTracked && (
                   <SafeAreaView style={[styles.rowContainer, styles.infoCardContainer, styles.bottom_element]}>
-                    <InfoCard header="Average ovulation phase length" days={avgOvulationPhaseLength} backgroundColor="#B9E0D8">
+                    <InfoCard header="Average ovulation length" days={avgOvulationPhaseLength} backgroundColor="#B9E0D8">
                       <Egg style={styles.icon} />
                     </InfoCard>
                   </SafeAreaView>
@@ -249,7 +258,6 @@ const styles = StyleSheet.create({
     width: 70,
     color: "#000000",
   },
-
   cardContainer: {
     flex: 1,
     marginHorizontal: 16,
@@ -338,9 +346,9 @@ const styles = StyleSheet.create({
   },
   element: {
     marginTop: "7%",
-    marginBottom: "3%"
+    marginBottom: "3%",
   },
   bottom_element: {
     marginBottom: "7%",
-  }
+  },
 });
