@@ -159,6 +159,28 @@ export default function CalendarScreen({ route, navigation }) {
     fetchYearData();
   }, [yearInView]);
 
+  useEffect(() => {
+    async function markOvulation() {
+      // 1. get days until ovulation
+      const daysUntilOvulation = await CycleService.GETPredictedDaysTillOvulation();
+      if (daysUntilOvulation <= 0) return;
+      // 2. build your 5-day ovulation window
+      let ovulationDates = [];
+      for (let i = 0; i < 5; i++) {
+        let date = new Date();
+        date.setDate(date.getDate() + (daysUntilOvulation + i));
+        ovulationDates.push({
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate(),
+        });
+      }
+      // 3. mark via LogMultipleDayOvulation
+      await LogMultipleDayOvulation(ovulationDates, []);
+    }
+    markOvulation();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       // set newly marked calendar dates with changed symptoms
@@ -221,7 +243,7 @@ export default function CalendarScreen({ route, navigation }) {
             customStyles: {
               container: {
                 borderRadius: 0,
-                backgroundColor: '#C6F2F0',
+                backgroundColor: '#55ad9e',
               },
               text: {
                 color: 'white',
