@@ -144,16 +144,6 @@ export default function LogMultipleDatesScreen({ navigation }) {
                         },
                       };
                     }
-                    if (day.ovulation) {
-                      allMarkedDates[stringDate] = {
-                        ...allMarkedDates[stringDate],
-                        marked: true,
-                        originalMarked: true,
-                        customStyles: {
-                          backgroundColor: "teal",
-                        },
-                      };
-                    }
                   });
                 });
               });
