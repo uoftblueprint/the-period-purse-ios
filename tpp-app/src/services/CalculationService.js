@@ -9,23 +9,11 @@ import { errorAlertModal } from "../error/errorAlertModal";
  * Calculates the average ovulation length given a completeHistory of their period intervals
  * @return {number} representing average ovulation length, 0 if not enough entries
  */
-export const calculateAverageOvulationLength = () => {
-  // Ensure there are enough entries to calculate ovulation length
-  if (completeHistory.length < 2) return 0;
-  // Estimate ovulation as the midpoint of each cycle
-  const ovulationLengths = completeHistory
-    .map((interval, index) => {
-      if (index === 0) return 0; // Skip the first interval as we need a reference cycle
-      const previousCycleStart = completeHistory[index - 1].start;
-      const currentCycleStart = interval.start;
-      const cycleLength = getDaysDiffInclusive(previousCycleStart, currentCycleStart);
-      // Ovulation is assumed to occur roughly 14 days before the next cycle starts
-      return cycleLength - 14 > 0 ? cycleLength - 14 : 0;
-    })
-    .filter((length) => length > 0); // Filter out invalid lengths
-  // Calculate average ovulation length
-  return ovulationLengths.length > 0
-    ? ovulationLengths.reduce((sum, length) => sum + length, 0) / ovulationLengths.length
+export const calculateAverageOvulationLength = (completeHistory) => {
+  return completeHistory.length > 0
+    ? completeHistory.reduce(function (sum, interval) {
+        return sum + interval.ovulationDays;
+      }, 0) / completeHistory.length
     : 0;
 };
 
