@@ -195,6 +195,44 @@ export const getPeriodsInYear = async (year, calendar = null) => {
 };
 
 /**
+ * Generalized function to find all dates in a year where a given symptom is not null.
+ *
+ * @param {Number} year The year from which to find all period days
+ * @param {Object} calendar The object containing the symptoms for this year, last year, and next year. Optional.
+ * @param {String} symptomType The type of symptom to find
+ * @return {Array} List of symptom Dates in this year, in chronological order
+ */
+export const getSymptomsInYear = async (year, calendar = null, symptomType) => {
+  let startOfYear = new Date(year, 0, 1);
+  let symptomDays = [];
+
+  if (!calendar) {
+    calendar = await getCalendarByYear(year);
+  }
+
+  let current = startOfYear;
+
+  try {
+    while (current.getFullYear() === year) {
+      let currentSymptoms = getSymptomsFromCalendar(
+        calendar,
+        current.getDate(),
+        current.getMonth() + 1,
+        current.getFullYear()
+      );
+      if (currentSymptoms[symptomType] !== null) {
+        symptomDays.push(current);
+      }
+      current = addDays(current, 1);
+    }
+    return symptomDays;
+  } catch (e) {
+    console.log(e);
+    return symptomDays;
+  }
+};
+
+/**
  * @returns {Promise} Promise that resolves into all the years that are stored. If none found, returns empty array
  */
 export const GETStoredYears = async () => {
@@ -260,3 +298,28 @@ export function getFullCurrentDateString() {
 
   return fullDateArray.join("-");
 }
+
+/**
+ * Returns the number of days between the first ovulation date and last ovulation date between two periods
+ * @param {*} prevPeriodEnd - The end of the previous period
+ * @param {*} currPeriodStart - The start of the current period
+ * @param {*} ovulations - The list of ovulation dates
+ * @returns {number} The number of days in the ovulation phase between the start and end of the period
+ */
+export const getOvulationPhaseLength = (prevPeriodEnd, currPeriodStart, ovulations) => {
+  // Filter ovulations within the period range
+  const ovulationDays = ovulations.filter((date) => date >= prevPeriodEnd && date <= currPeriodStart);
+
+  // If there are no ovulations return 0
+  if (ovulationDays.length == 0) {
+    return 0;
+  } else if (ovulationDays.length == 1) {
+    return 1;
+  }
+
+  // Sort the dates to ensure we get first and last correctly
+  ovulationDays.sort((a, b) => a - b);
+
+  // Return the number of days between first and last ovulation using differenceInCalendarDays
+  return differenceInCalendarDays(ovulationDays[ovulationDays.length - 1], ovulationDays[0]);
+};

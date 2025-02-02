@@ -8,12 +8,13 @@ import { errorAlertModal } from "../error/errorAlertModal";
 /**
  * Calculates the average ovulation length given a completeHistory of their period intervals
  * @return {number} representing average ovulation length, 0 if not enough entries
- *
- * @Fred implement this.
- * @Mark use this for your prediction task.
  */
-export const calculateAverageOvulationLength = () => {
-  return 0;
+export const calculateAverageOvulationLength = (completeHistory) => {
+  return completeHistory.length > 0
+    ? completeHistory.reduce(function (sum, interval) {
+        return sum + interval.ovulationDays;
+      }, 0) / completeHistory.length
+    : 0;
 };
 
 /**
@@ -52,7 +53,7 @@ export const calculateAverageCycleLength = (completeHistory) => {
 };
 
 /**
- * Calculates and saves to AsyncStorage the average period length and average cycle length of the user.
+ * Calculates and saves to AsyncStorage the average period length, average cycle length, and average ovulation length of the user.
  */
 export const calculateAverages = async () =>
   new Promise(async (resolve, reject) => {
@@ -73,13 +74,17 @@ export const calculateAverages = async () =>
             // Use map and reduce to find average
             const averageCycleLength = calculateAverageCycleLength(completeHistory);
 
+            const averageOvulationPhaseLength = calculateAverageOvulationLength(completeHistory);
+
             AsyncStorage.multiSet([
               [KEYS.AVERAGE_CYCLE_LENGTH, JSON.stringify(averageCycleLength)],
               [KEYS.AVERAGE_PERIOD_LENGTH, JSON.stringify(averagePeriodLength)],
+              [KEYS.AVERAGE_OVULATION_PHASE_LENGTH, JSON.stringify(averageOvulationPhaseLength)],
             ])
               .then(() => {
                 console.log(`Recalculated ${KEYS.AVERAGE_PERIOD_LENGTH} as ${averagePeriodLength}`);
                 console.log(`Recalculated ${KEYS.AVERAGE_CYCLE_LENGTH} as ${averageCycleLength}`);
+                console.log(`Recalculated ${KEYS.AVERAGE_OVULATION_PHASE_LENGTH} as ${averageOvulationPhaseLength}`);
                 resolve();
               })
               .catch((error) => {
