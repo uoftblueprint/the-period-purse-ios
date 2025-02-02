@@ -263,59 +263,6 @@ export default function LogMultipleDatesScreen({ navigation }) {
     }
   };
 
-  const onSubmit = async () => {
-    let selectedDates = [];
-    let deselectedDates = [];
-
-    Object.keys(markedDates).map((date) => {
-      // Dates that were not selected before that have been marked as selected
-      if (markedDates[date].marked && !markedDates[date].originalMarked) {
-        const processed = date.split("-");
-        const data = { year: processed[0], month: processed[1], day: processed[2] };
-
-        selectedDates.push(data);
-
-        // Dates that were selected before that have been marked as unselected
-      } else if (!markedDates[date].marked && markedDates[date].originalMarked) {
-        const processed = date.split("-");
-        const data = { year: processed[0], month: processed[1], day: processed[2] };
-
-        deselectedDates.push(data);
-      }
-    });
-
-    let inputData = {};
-
-    if (selectedDates.length + deselectedDates.length > 0) {
-      try {
-        await LogMultipleDayPeriod(selectedDates, deselectedDates);
-        for (let date of selectedDates.concat(deselectedDates)) {
-          let cal = await getCalendarByYear(date.year);
-          let submitSymp = getSymptomsFromCalendar(cal, date.day, date.month, date.year);
-          let dateObject = new Date(date.year, date.month - 1, date.day);
-          inputData[getISODate(dateObject)] = {
-            symptoms: submitSymp,
-          };
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    let newDate = null;
-    if (selectedDates.length > 0)
-      newDate = [selectedDates[0].year, selectedDates[0].month, selectedDates[0].day].join("-");
-    else if (deselectedDates.length > 0)
-      newDate = [deselectedDates[0].year, deselectedDates[0].month, deselectedDates[0].day].join("-");
-
-    navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, {
-      inputData: inputData,
-      newDate: newDate,
-    });
-
-    await calculateAverages();
-  };
-
   const alertPopup = (info) => {
     Alert.alert(info.title, info.message, [
       {
