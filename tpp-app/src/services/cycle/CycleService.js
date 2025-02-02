@@ -478,6 +478,44 @@ const CycleService = {
       return -1;
     }
   },
+
+  /**
+   * Get the predicted number of days until the next ovulation.
+   * Calculates by adding the average difference between cycle and period lengths to the last period start date.
+   * Defaults to 14 days if insufficient data is available.
+   * @return {Promise<number>} Resolves into the number of days until the next ovulation.
+   */
+  GETPredictedDaysTillOvulation: async function () {
+    try {
+      const today = new Date();
+      const lastPeriodStart = await this.GETMostRecentPeriodStartDate();
+      const daysUntilNextPeriod = await this.GETPredictedDaysTillPeriod(); 
+      
+      if (!lastPeriodStart || daysUntilNextPeriod === -1) {
+        console.log('No period data available for ovulation prediction');
+        return null;
+      }
+
+      // Default to 14 days after period start if no other data available
+      const periodToOvulationDifference = 14;
+      
+      const predictedOvulationDate = addDays(lastPeriodStart, periodToOvulationDifference);
+      const daysUntilOvulation = differenceInDays(predictedOvulationDate, today);
+
+      if (daysUntilOvulation < 0) {
+        // If predicted date has passed, calculate for next cycle
+        const nextPeriodStart = addDays(today, daysUntilNextPeriod);
+        const nextOvulationDate = addDays(nextPeriodStart, periodToOvulationDifference);
+        return differenceInDays(nextOvulationDate, today);
+      }
+
+      return daysUntilOvulation;
+    } catch (e) {
+      console.error('Error predicting ovulation:', e);
+      return null;
+    }
+  },
 };
 
 export default CycleService;
+

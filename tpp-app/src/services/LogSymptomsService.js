@@ -112,3 +112,4 @@ export const LogMultipleDayPeriod = async (datesToMark, datesToUnmark) => {
     }
   }
 };
+

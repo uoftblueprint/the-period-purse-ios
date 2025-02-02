@@ -226,11 +226,20 @@ export default function LogSymptomsScreen({ navigation, route }) {
       .then(async () => {
         let inputData = {};
         inputData[getISODate(selectedDate)] = {
-          // submitSymp may be null, in that case pass back blank Symptoms object
           symptoms: submitSymp,
         };
-        navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, { inputData: inputData });
-        // navigation.goBack(isDirty);
+
+        // First update the calendar data
+        navigation.navigate({
+          name: CALENDAR_STACK_SCREENS.CYCLE_CALENDAR_TABS,
+          params: { inputData },
+          merge: true,
+        });
+
+        // Then go back to close the symptoms screen
+        setTimeout(() => {
+          navigation.goBack();
+        }, 0);
 
         // Only need to recalculateAverages if flow was changed
         if (flowOnOffModeChanged(submitSymp.flow, stored.flow)) {
@@ -241,7 +250,6 @@ export default function LogSymptomsScreen({ navigation, route }) {
         let errorInfo = submitError(typeof e === "string" ? e : JSON.stringify(e));
         alertPopup(errorInfo)
           .then(() => {
-            // YES close screen
             navigation.goBack();
           })
           .catch(); // CANCEL do nothing and close alert

@@ -8,6 +8,8 @@ import {
   POSTRemindLogSymptomsFreq,
   POSTRemindLogPeriodTime,
   POSTRemindLogSymptomsTime,
+  POSTRemindOvulationFreq,
+  POSTRemindOvulationTime,
 } from "../services/SettingsService";
 
 const NotificationAccordion = (props) => {
@@ -20,7 +22,7 @@ const NotificationAccordion = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity ref={this.accordion} style={styles.dropDownTextBox} onPress={() => toggleExpand()}>
+      <TouchableOpacity style={styles.dropDownTextBox} onPress={() => toggleExpand()}>
         <Text style={styles.dropDownLeftText}>{props.title}</Text>
         <Text style={styles.dropDownRightText}>{props.selectedText}</Text>
         <Icon name={expanded ? "keyboard-arrow-up" : "keyboard-arrow-down"} size={30} color={"#5A9F93"} />
@@ -63,6 +65,17 @@ const PickerTab = (props) => {
     case "symptomTime":
       picker = (
         <SymptomTimePicker
+          selectedText={props.selectedText}
+          time={props.time}
+          meridian={props.meridian}
+          setTime={props.setTime}
+          setTimeMeridian={props.setTimeMeridian}
+        />
+      );
+      break;
+    case "ovulationTime":
+      picker = (
+        <OvulationTimePicker
           selectedText={props.selectedText}
           time={props.time}
           meridian={props.meridian}
@@ -189,6 +202,52 @@ const PeriodTimePicker = (props) => {
     </View>
   );
 };
+
+const OvulationTimePicker = (props) => {
+  // var storedTime = "10:00"
+  // var storedMeridian = "AM"
+  // if (typeof props.selectedText == 'string'){
+  //     const values = props.selectedText.split("")
+  //     storedTime = values[0]
+  //     storedMeridian = values[1]
+  // }
+
+  return (
+    <View style={styles.timePickerContainer}>
+      <Picker
+        selectedValue={props.time}
+        onValueChange={(itemValue) => {
+          props.setTime(itemValue), POSTRemindOvulationTime(itemValue + " " + props.meridian);
+        }}
+        style={styles.timePickerTimeWidth}
+      >
+        <Picker.Item label={"1:00"} value={"1:00"} />
+        <Picker.Item label={"2:00"} value={"2:00"} />
+        <Picker.Item label={"3:00"} value={"3:00"} />
+        <Picker.Item label={"4:00"} value={"4:00"} />
+        <Picker.Item label={"5:00"} value={"5:00"} />
+        <Picker.Item label={"6:00"} value={"6:00"} />
+        <Picker.Item label={"7:00"} value={"7:00"} />
+        <Picker.Item label={"8:00"} value={"8:00"} />
+        <Picker.Item label={"9:00"} value={"9:00"} />
+        <Picker.Item label={"10:00"} value={"10:00"} />
+        <Picker.Item label={"11:00"} value={"11:00"} />
+        <Picker.Item label={"12:00"} value={"12:00"} />
+      </Picker>
+      <Picker
+        selectedValue={props.meridian}
+        onValueChange={(itemValue) => {
+          props.setTimeMeridian(itemValue), POSTRemindOvulationTime(props.time + " " + itemValue);
+        }}
+        style={styles.timePickerMeridianWidth}
+      >
+        <Picker.Item label={"AM"} value={"AM"} />
+        <Picker.Item label={"PM"} value={"PM"} />
+      </Picker>
+    </View>
+  );
+};
+
 const SchedulingPicker = (props) => {
   return (
     <View>
@@ -196,7 +255,7 @@ const SchedulingPicker = (props) => {
         selectedValue={props.selectedText}
         onValueChange={(itemValue) => {
           props.setSelectedText(itemValue);
-          POSTRemindLogPeriodFreq(itemValue);
+          POSTRemindOvulationFreq(itemValue);
         }}
       >
         <Picker.Item label={"1 days"} value={"1"} />
@@ -206,6 +265,11 @@ const SchedulingPicker = (props) => {
         <Picker.Item label={"5 days"} value={"5"} />
         <Picker.Item label={"6 days"} value={"6"} />
         <Picker.Item label={"7 days"} value={"7"} />
+        <Picker.Item label={"8 days"} value={"8"} />
+        <Picker.Item label={"9 days"} value={"9"} />
+        <Picker.Item label={"10 days"} value={"10"} />
+        <Picker.Item label={"11 days"} value={"11"} />
+        <Picker.Item label={"12 days"} value={"12"} />
       </Picker>
     </View>
   );

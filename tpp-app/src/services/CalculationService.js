@@ -72,6 +72,8 @@ export const calculateAverages = async () =>
 
             // Use map and reduce to find average
             const averageCycleLength = calculateAverageCycleLength(completeHistory);
+            
+            const averageOvulationLength = calculateAverageOvulationLength(completeHistory);
 
             AsyncStorage.multiSet([
               [KEYS.AVERAGE_CYCLE_LENGTH, JSON.stringify(averageCycleLength)],
@@ -80,6 +82,7 @@ export const calculateAverages = async () =>
               .then(() => {
                 console.log(`Recalculated ${KEYS.AVERAGE_PERIOD_LENGTH} as ${averagePeriodLength}`);
                 console.log(`Recalculated ${KEYS.AVERAGE_CYCLE_LENGTH} as ${averageCycleLength}`);
+                console.log(`Recalculated ${KEYS.AVERAGE_OVULATION_PHASE_LENGTH} as ${averageOvulationLength}`);
                 resolve();
               })
               .catch((error) => {
