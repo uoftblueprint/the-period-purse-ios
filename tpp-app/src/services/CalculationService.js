@@ -8,9 +8,6 @@ import { errorAlertModal } from "../error/errorAlertModal";
 /**
  * Calculates the average ovulation length given a completeHistory of their period intervals
  * @return {number} representing average ovulation length, 0 if not enough entries
- *
- * @Fred implement this.
- * @Mark use this for your prediction task.
  */
 export const calculateAverageOvulationLength = () => {
   // Ensure there are enough entries to calculate ovulation length
@@ -30,7 +27,6 @@ export const calculateAverageOvulationLength = () => {
   return ovulationLengths.length > 0
     ? ovulationLengths.reduce((sum, length) => sum + length, 0) / ovulationLengths.length
     : 0;
-
 };
 
 /**
@@ -41,8 +37,8 @@ export const calculateAverageOvulationLength = () => {
 export const calculateAveragePeriodLength = (completeHistory) => {
   return completeHistory.length > 0
     ? completeHistory.reduce(function (sum, interval) {
-      return sum + interval.periodDays;
-    }, 0) / completeHistory.length
+        return sum + interval.periodDays;
+      }, 0) / completeHistory.length
     : 0;
 };
 
@@ -54,17 +50,17 @@ export const calculateAveragePeriodLength = (completeHistory) => {
 export const calculateAverageCycleLength = (completeHistory) => {
   return completeHistory.length - 1 > 0
     ? completeHistory
-      // Map to difference of days
-      .map((interval, index) => {
-        return index === 0 ? 0 : getDaysDiffInclusive(completeHistory[index - 1].start, interval.start) - 1;
-      })
-      // Remove 0th index
-      .slice(1)
-      // Find average
-      .reduce((sum, cycleDays) => {
-        return sum + cycleDays;
-      }, 0) /
-    (completeHistory.length - 1)
+        // Map to difference of days
+        .map((interval, index) => {
+          return index === 0 ? 0 : getDaysDiffInclusive(completeHistory[index - 1].start, interval.start) - 1;
+        })
+        // Remove 0th index
+        .slice(1)
+        // Find average
+        .reduce((sum, cycleDays) => {
+          return sum + cycleDays;
+        }, 0) /
+        (completeHistory.length - 1)
     : 0;
 };
 
@@ -90,12 +86,12 @@ export const calculateAverages = async () =>
             // Use map and reduce to find average
             const averageCycleLength = calculateAverageCycleLength(completeHistory);
 
-            const averageOvulationPhaseLength = calculateAverageOvulationLength(completeHistory)
+            const averageOvulationPhaseLength = calculateAverageOvulationLength(completeHistory);
 
             AsyncStorage.multiSet([
               [KEYS.AVERAGE_CYCLE_LENGTH, JSON.stringify(averageCycleLength)],
               [KEYS.AVERAGE_PERIOD_LENGTH, JSON.stringify(averagePeriodLength)],
-              [KEYS.AVERAGE_OVULATION_PHASE_LENGTH, JSON.stringify(averageOvulationPhaseLength)]
+              [KEYS.AVERAGE_OVULATION_PHASE_LENGTH, JSON.stringify(averageOvulationPhaseLength)],
             ])
               .then(() => {
                 console.log(`Recalculated ${KEYS.AVERAGE_PERIOD_LENGTH} as ${averagePeriodLength}`);

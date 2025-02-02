@@ -8,14 +8,13 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "@react-navigation/native";
 import BloodDrop from "../../../assets/icons/flow_with_heart.svg";
 import Calendar from "../../../assets/icons/menstruation_calendar.svg";
-import Egg from "../../../assets/icons/egg.svg";
+import AverageOvulation from "../../../assets/icons/average_ovulation_egg_icon.svg"; // This icon is only used for average ovulation card.
 import Paddy from "../../../assets/icons/paddy.svg";
 import { Footer } from "../../services/utils/footer";
 import LoadingVisual from "../components/LoadingVisual";
 import ErrorFallback from "../../error/error-boundary";
 import { GETAllTrackingPreferences } from "../../services/SettingsService";
 import { TRACK_SYMPTOMS } from "../../services/utils/constants";
-
 
 function InfoCard(props) {
   let DefaultText = <Text style={styles.messageForDefault}>Please start logging to learn more. </Text>;
@@ -158,12 +157,12 @@ export default function CycleScreen({ navigation }) {
           const ovulationTracking = values.find(([key]) => key === TRACK_SYMPTOMS.OVULATION);
           if (ovulationTracking) {
             setIsOvulationTracked(JSON.parse(ovulationTracking[1]));
-            console.log(JSON.parse(ovulationTracking[1]))
+            console.log(JSON.parse(ovulationTracking[1]));
           }
         })
         .catch(() => {
           setIsOvulationTracked(false);
-          console.log("false")
+          console.log("false");
         });
 
       Promise.all([
@@ -222,8 +221,12 @@ export default function CycleScreen({ navigation }) {
                 </SafeAreaView>
                 {isOvulationTracked && (
                   <SafeAreaView style={[styles.rowContainer, styles.infoCardContainer, styles.bottom_element]}>
-                    <InfoCard header="Average ovulation length" days={avgOvulationPhaseLength} backgroundColor="#B9E0D8">
-                      <Egg style={styles.icon} />
+                    <InfoCard
+                      header="Average ovulation length"
+                      days={avgOvulationPhaseLength}
+                      backgroundColor="#B9E0D8"
+                    >
+                      <AverageOvulation style={styles.icon} />
                     </InfoCard>
                   </SafeAreaView>
                 )}
