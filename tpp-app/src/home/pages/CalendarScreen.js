@@ -175,8 +175,6 @@ export default function CalendarScreen({ route, navigation }) {
           day: date.getDate(),
         });
       }
-      // 3. mark via LogMultipleDayOvulation
-      await LogMultipleDayOvulation(ovulationDates, []);
     }
     markOvulation();
   }, []);
@@ -243,7 +241,7 @@ export default function CalendarScreen({ route, navigation }) {
             customStyles: {
               container: {
                 borderRadius: 0,
-                backgroundColor: '#55ad9e',
+                backgroundColor: '#55ad9e', // ARGB: #0xFF55AD9E
               },
               text: {
                 color: 'white',
@@ -266,7 +264,7 @@ export default function CalendarScreen({ route, navigation }) {
             customStyles: {
               container: {
                 borderRadius: 0,
-                backgroundColor: '#C6F2F0',
+                backgroundColor: '#55ad9e', 
               },
               text: {
                 color: 'white',
