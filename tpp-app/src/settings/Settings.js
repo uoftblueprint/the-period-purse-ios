@@ -213,6 +213,87 @@ const NotificationSettings = (props) => {
   const [remindOvulationTime, setRemindOvulationTime] = useState("10:00");
   const [remindOvulationTimeMeridian, setRemindOvulationTimeMeridian] = useState("AM");
 
+
+
+  // get the days until period
+  useFocusEffect(
+    React.useCallback(() => {
+      GETRemindLogSymptoms().then((enabled) => {
+        setRemindSymptomsEnabled(enabled);
+      });
+
+      CycleService.GETPredictedDaysTillPeriod()
+        .then((numDays) => {
+          let toSet;
+          if (numDays && numDays != -1) {
+            toSet = numDays;
+          } else {
+            toSet = 0;
+          }
+          setNumberOfDaysUntilPeriod(toSet);
+        })
+        .catch(() => {
+          setDaysTillPeriod(0);
+        });
+    }, [])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      if (props.route.params?.remindSymptomsFreq) setRemindSymptomsFreq(props.route.params?.remindSymptomsFreq);
+      if (props.route.params?.remindSymptomsTime) setRemindSymptomsTime(props.route.params?.remindSymptomsTime);
+      if (props.route.params?.remindSymptomsTimeMeridian)
+        setRemindSymptomsTimeMeridian(props.route.params?.remindSymptomsTimeMeridian);
+
+      if (props.route.params?.remindSymptomsFreq && props.route.params?.remindSymptomsTime) {
+        console.log(234);
+        POSTRemindLogSymptoms(remindSymptomsEnabled);
+      }
+    }, [
+      props.route.params?.remindPeriodFreq,
+      props.route.params?.remindPeriodTime,
+      props.route.params?.remindSymptomsFreq,
+      props.route.params?.remindSymptomsTime,
+    ])
+  );
+
+  // get the frequencies
+  useEffect(() => {
+    async function getRemindSymptomsEnabled() {
+      let remindSymptoms = await GETRemindLogSymptoms();
+      console.log(318, typeof remindSymptoms);
+      setRemindSymptomsEnabled(remindSymptoms);
+    }
+
+    async function getFreqTimes() {
+      let storedSymptomFreq = await GETRemindLogSymptomsFreq();
+      let storedSymptomTime = await GETRemindLogSymptomsTime();
+
+      if (storedSymptomFreq) {
+        setRemindSymptomsFreq(storedSymptomFreq);
+      }
+
+      if (storedSymptomTime) {
+        let parsedTime = storedSymptomTime.split(" ");
+        setRemindSymptomsTime(parsedTime[0]);
+        setRemindSymptomsTimeMeridian(parsedTime[1]);
+      }
+    }
+
+    getFreqTimes();
+    getRemindSymptomsEnabled();
+  }, []);
+    
+  
+    // const togglePeriodSwitch = async () => {
+    //     console.log(379, remindPeriodEnabled)
+    //     POSTRemindLogPeriod(!remindPeriodEnabled)
+    //         .then(async () => {
+    //             setRemindPeriodEnabled(!remindPeriodEnabled);
+    //         });
+    //
+    // };
+
   useFocusEffect(
     React.useCallback(() => {
       async function getNotificationSettings() {
