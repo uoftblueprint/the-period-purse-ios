@@ -244,6 +244,19 @@ const CycleService = {
       return null;
     }
   },
+  /**
+   * Get the user's average ovulation phase length
+   * @return {Promise} Resolves into either an integer for number of days or NULL if info is not present
+   */
+  GETAverageOvulationPhaseLength: async function () {
+    try {
+      const res = await AsyncStorage.getItem(Keys.AVERAGE_OVULATION_PHASE_LENGTH);
+      return res;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  },
 
   /**
    * Get the number of days the user has been on their period
@@ -356,11 +369,10 @@ const CycleService = {
   GETCycleHistoryByYear: async function (year) {
     let periodDays;
     let intervals = [];
-    let endOfYear = new Date(year, 11, 31);
-    let isYearsLastPeriod = true;
 
     let calendar = await getCalendarByYear(year);
     let periods = await getPeriodsInYear(year, calendar);
+    let ovulations = await getSymptomsInYear(year, calendar, "ovulation");
 
     if (periods.length === 0) {
       return intervals;
@@ -389,11 +401,13 @@ const CycleService = {
             periodStart = periods[i];
             periodEnd = await getLastPeriodsEnd(periodStart);
             periodDays = getDaysDiffInclusive(periodEnd, periodStart);
-            intervals.push({ start: periodStart, periodDays: periodDays });
+            ovulationDays = getOvulationPhaseLength(periodEnd, periodStart, ovulations);
+            intervals.push({ start: periodStart, periodDays: periodDays, ovulationDays: ovulationDays });
           } else if (periodEnd && periodStart) {
             //general case for any period besides first or last in the year
             periodDays = getDaysDiffInclusive(periodEnd, periodStart);
-            intervals.push({ start: periodStart, periodDays: periodDays });
+            ovulationDays = getOvulationPhaseLength(periodEnd, periodStart, ovulations);
+            intervals.push({ start: periodStart, periodDays: periodDays, ovulationDays: ovulationDays });
           }
           isLastPeriodStart = false;
         } else {
