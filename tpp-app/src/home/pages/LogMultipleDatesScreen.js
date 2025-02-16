@@ -223,6 +223,7 @@ export default function LogMultipleDatesScreen({ navigation }) {
     onSubmit();
   }, [submitting]);
 
+
   const unsavedChanges = {
     title: "Unsaved changes",
     message: "Your changes have not been saved. Do you want to discard the changes and continue?",
@@ -261,7 +262,6 @@ export default function LogMultipleDatesScreen({ navigation }) {
       setNumSelected(numSelected + 1);
     }
   };
-
   const onSubmit = async () => {
     let selectedDates = [];
     let deselectedDates = [];
@@ -314,7 +314,6 @@ export default function LogMultipleDatesScreen({ navigation }) {
 
     await calculateAverages();
   };
-
   const alertPopup = (info) => {
     Alert.alert(info.title, info.message, [
       {

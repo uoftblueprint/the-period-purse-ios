@@ -17,12 +17,17 @@ import {
   GETRemindLogSymptomsTime,
   POSTRemindLogSymptoms,
   POSTUpdateOnePreference,
+  GETRemindOvulation,
+  GETRemindOvulationFreq,
+  GETRemindOvulationTime,
+  POSTRemindOvulation,
 } from "../services/SettingsService";
 import { TRACK_SYMPTOMS, VIEWS } from "../services/utils/constants";
 import CycleService from "../services/cycle/CycleService";
 import { useFocusEffect } from "@react-navigation/native";
 import { STACK_SCREENS } from "./SettingsNavigator.js";
 import ErrorFallback from "../error/error-boundary";
+import { use } from "react";
 
 const PreferenceButton = (props) => {
   return (
@@ -58,7 +63,8 @@ const Preferences = (props) => {
       let stored = await GETAllTrackingPreferences();
       // set trackingPrefs somewhere
       for (let pref of stored) {
-        let toTrack = pref[1].toLowerCase() === "true";
+        // Modify the following line to handle boolean values
+        let toTrack = typeof pref[1] === "string" ? pref[1].toLowerCase() === "true" : pref[1] === true;
         // if tracking that symptom is set to true, append it to trackingPrefs
         if (toTrack) {
           let title = pref[0];
@@ -86,7 +92,7 @@ const Preferences = (props) => {
               break;
             case TRACK_SYMPTOMS.OVULATION:
               symptom = "ovulation";
-              trackOvulation(OVULATION);
+              trackOvulation(TEAL);
               break;
             default:
               break;
@@ -193,12 +199,21 @@ const NotificationSettings = (props) => {
   // needed for Settings Page
   const [remindPeriodEnabled, setRemindPeriodEnabled] = useState(false);
   const [remindSymptomsEnabled, setRemindSymptomsEnabled] = useState(false);
+  const [remindOvulationEnabled, setRemindOvulationEnabled] = useState(false);
   const [numberOfDaysUntilPeriod, setNumberOfDaysUntilPeriod] = useState(0);
+  const [numberOfDaysUntilOvulation, setNumberOfDaysUntilOvulation] = useState(0);
+  
 
   // needed for Notification Page
   const [remindSymptomsFreq, setRemindSymptomsFreq] = useState("Every day");
   const [remindSymptomsTime, setRemindSymptomsTime] = useState("10:00");
   const [remindSymptomsTimeMeridian, setRemindSymptomsTimeMeridian] = useState("AM");
+
+  const [remindOvulationFreq, setRemindOvulationFreq] = useState("7");
+  const [remindOvulationTime, setRemindOvulationTime] = useState("10:00");
+  const [remindOvulationTimeMeridian, setRemindOvulationTimeMeridian] = useState("AM");
+
+
 
   // get the days until period
   useFocusEffect(
@@ -268,15 +283,67 @@ const NotificationSettings = (props) => {
     getFreqTimes();
     getRemindSymptomsEnabled();
   }, []);
+    
+  
+    // const togglePeriodSwitch = async () => {
+    //     console.log(379, remindPeriodEnabled)
+    //     POSTRemindLogPeriod(!remindPeriodEnabled)
+    //         .then(async () => {
+    //             setRemindPeriodEnabled(!remindPeriodEnabled);
+    //         });
+    //
+    // };
 
-  // const togglePeriodSwitch = async () => {
-  //     console.log(379, remindPeriodEnabled)
-  //     POSTRemindLogPeriod(!remindPeriodEnabled)
-  //         .then(async () => {
-  //             setRemindPeriodEnabled(!remindPeriodEnabled);
-  //         });
-  //
-  // };
+  useFocusEffect(
+    React.useCallback(() => {
+      async function getNotificationSettings() {
+        // Get symptom notification settings
+        const symptomsEnabled = await GETRemindLogSymptoms();
+        setRemindSymptomsEnabled(symptomsEnabled);
+        
+        const storedSymptomFreq = await GETRemindLogSymptomsFreq();
+        const storedSymptomTime = await GETRemindLogSymptomsTime();
+
+        if (storedSymptomFreq) {
+          setRemindSymptomsFreq(storedSymptomFreq);
+        }
+
+        if (storedSymptomTime) {
+          let parsedTime = storedSymptomTime.split(" ");
+          setRemindSymptomsTime(parsedTime[0]);
+          setRemindSymptomsTimeMeridian(parsedTime[1]);
+        }
+
+        // Get ovulation notification settings
+        const ovulationEnabled = await GETRemindOvulation();
+        setRemindOvulationEnabled(ovulationEnabled);
+
+        const storedOvulationFreq = await GETRemindOvulationFreq();
+        const storedOvulationTime = await GETRemindOvulationTime();
+
+        if (storedOvulationFreq) {
+          setRemindOvulationFreq(storedOvulationFreq);
+        }
+
+        if (storedOvulationTime) {
+          let parsedTime = storedOvulationTime.split(" ");
+          setRemindOvulationTime(parsedTime[0]);
+          setRemindOvulationTimeMeridian(parsedTime[1]);
+        }
+
+        // Get predicted days
+        try {
+          const numDays = await CycleService.GETPredictedDaysTillPeriod();
+          setNumberOfDaysUntilPeriod(numDays && numDays !== -1 ? numDays : 0);
+        } catch (error) {
+          setNumberOfDaysUntilPeriod(0);
+        }
+      }
+
+      getNotificationSettings();
+    }, [])
+  );
+
   const toggleSymptomsSwitch = async () => {
     // post here
     POSTRemindLogSymptoms(!remindSymptomsEnabled).then(() => {
@@ -284,19 +351,34 @@ const NotificationSettings = (props) => {
       setRemindSymptomsEnabled(!remindSymptomsEnabled);
     });
   };
+
+  const toggleOvulationSwitch = async () => {
+    try {
+      // post here
+      await POSTRemindOvulation(!remindOvulationEnabled);
+      console.log('New ovulation reminder state:', !remindOvulationEnabled);
+      setRemindOvulationEnabled(!remindOvulationEnabled);
+    } catch (error) {
+      console.error('Failed to toggle ovulation reminder:', error);
+      // Optionally show an error to the user
+      errorAlertModal();
+    }
+  };
+  
   return (
     <SafeAreaView style={{ top: "-5%" }}>
       <Text style={styles.heading}>Notifications</Text>
-      {/*<NotificationsButton */}
-      {/*    text={"Remind me to log period"} */}
-      {/*    subtext={`${remindPeriodFreq} ${remindPeriodFreq === "1" ? "day" : "days" } before at ${remindPeriodTime + " " + remindPeriodTimeMeridian}`}*/}
-      {/*    toggle={togglePeriodSwitch} */}
-      {/*    enabled={remindPeriodEnabled} />*/}
       <NotificationsButton
         text={"Remind me to log symptoms"}
         subtext={`${remindSymptomsFreq} at ${remindSymptomsTime + " " + remindSymptomsTimeMeridian}`}
         toggle={toggleSymptomsSwitch}
         enabled={remindSymptomsEnabled}
+      />
+      <NotificationsButton
+        text={"Remind me of my next ovulation"}
+        subtext={`${remindOvulationFreq} Days before Ovulation at ${remindOvulationTime + " " + remindOvulationTimeMeridian}`}
+        toggle={toggleOvulationSwitch}
+        enabled={remindOvulationEnabled}
       />
       <TouchableOpacity onPress={() => props.navigation.navigate(STACK_SCREENS.NOTIFICATIONS)}>
         <View>
@@ -319,12 +401,11 @@ const NotificationSettings = (props) => {
   );
 };
 
+
 const SettingOptions = ({ navigation }) => {
   return (
     <SafeAreaView style={{ top: "-8%" }}>
       <Text style={styles.heading}>Account settings </Text>
-      {/*<SettingsStackButton name={"Profile Information"}  navigation={navigation} />*/}
-      {/*<SettingsStackButton name={"Privacy Policy"}  navigation={navigation}/>*/}
       <SettingsStackButton name={STACK_SCREENS.BACK_UP_ACCOUNT} navigation={navigation} />
       <SettingsStackButton name={STACK_SCREENS.DELETE_ACCOUNT} navigation={navigation} />
     </SafeAreaView>
@@ -505,3 +586,4 @@ const styles = StyleSheet.create({
     color: "#5A9F93",
   },
 });
+
