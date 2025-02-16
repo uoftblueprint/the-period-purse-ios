@@ -122,7 +122,7 @@ export default function PeriodStart({ route, navigation }) {
           </SafeAreaView>
 
           <TwoButtonContainer>
-            {/* <SkipButton
+            <SkipButton
               title="Skip"
               onPress={() =>
                 navigation.navigate(STACK_SCREENS.SYMPTOMS_CHOICES, {
@@ -131,7 +131,7 @@ export default function PeriodStart({ route, navigation }) {
                   periodEnd: null,
                 })
               }
-            /> */}
+            />
             <NextButton
               title="Next"
               onPress={() => {
