@@ -57,7 +57,7 @@ export default function CycleScreen({ navigation }) {
     PERIOD_DAYS: 0,
     DAYS_SINCE_LAST_PERIOD: 0,
     CYCLE_DONUT_PERCENT: 0,
-    DAYS_TILL_PERIOD: 0,
+    DAYS_TILL_PERIOD: 28,
     INTERVALS: [],
     SHOW_TIP: false,
   };
