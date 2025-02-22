@@ -108,6 +108,15 @@ export const POSTSymptomsToTrack = async (
   ovulation
 ) =>
   new Promise(async (resolve, reject) => {
+    console.log("Tracking values:", {
+      flow,
+      mood,
+      sleep,
+      cramps,
+      exercise,
+      ovulation,
+    });
+    
     try {
       if (
         [flow, mood, sleep, cramps, exercise, ovulation].some((bool) => bool)
