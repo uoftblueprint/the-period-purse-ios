@@ -144,7 +144,7 @@ export default function SymptomsChoices({ route, navigation }) {
           <SkipButton
             title="Skip"
             onPress={async () => {
-              POSTSymptomsToTrack(true, false, false, false, false).then(() => {
+              POSTSymptomsToTrack(true, false, false, false, false, false).then(() => {
                 navigation.navigate(STACK_SCREENS.CONFIRMATION, {
                   periodLength: periodLength,
                   periodStart: periodStart,
