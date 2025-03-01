@@ -229,8 +229,10 @@ export default function LogSymptomsScreen({ navigation, route }) {
           // submitSymp may be null, in that case pass back blank Symptoms object
           symptoms: submitSymp,
         };
-        navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, { inputData: inputData });
+        // navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, { inputData });
         // navigation.goBack(isDirty);
+        route.params.onReturn?.(inputData);
+        navigation.goBack();
 
         // Only need to recalculateAverages if flow was changed
         if (flowOnOffModeChanged(submitSymp.flow, stored.flow)) {

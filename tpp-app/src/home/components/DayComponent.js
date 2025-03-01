@@ -43,7 +43,7 @@ import { CALENDAR_STACK_SCREENS } from "../CalendarNavigator";
 import { Filter } from "react-native-svg";
 
 // The component that is used by each day in the calendar
-export const DayComponent = ({ date, state, marking, selectedView, navigation }) => {
+export const DayComponent = ({ date, state, marking, selectedView, navigation, setMarked }) => {
   let bgColor;
   let textColor;
   let iconName = "view";
@@ -127,6 +127,9 @@ export const DayComponent = ({ date, state, marking, selectedView, navigation })
         if (!isDisabled && !marking?.disable) {
           navigation.navigate(CALENDAR_STACK_SCREENS.LOG_SYMPTOMS, {
             date: date,
+            onReturn: (inputData) => {
+              setMarked((markedState) => ({ ...markedState, ...inputData }));
+            },
           });
         }
       }}
