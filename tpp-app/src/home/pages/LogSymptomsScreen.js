@@ -145,7 +145,6 @@ export default function LogSymptomsScreen({ navigation, route }) {
       state: isOvulating,
       setState: setIsOvulating,
     },
-    },
     notes: {
       state: notesStr,
       setState: setNotes,
@@ -242,12 +241,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
       })
       .catch((e) => {
         let errorInfo = submitError(typeof e === "string" ? e : JSON.stringify(e));
-        alertPopup(errorInfo)
-          .then(() => {
-            // YES close screen
-            navigation.goBack();
-          })
-          .catch(); // CANCEL do nothing and close alert
+        alertPopup(errorInfo);
         setSubmitting(false);
       });
   }, [submitting]);
