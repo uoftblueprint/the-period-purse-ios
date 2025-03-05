@@ -44,7 +44,7 @@ const DateArrow = ({ onPress, isRight }) => {
   );
 };
 
-const symptoms = ["flow", "ovulation", "mood", "sleep", "cramps", "exercise",  "notes"]; // order of symptom accordions
+const symptoms = ["flow", "ovulation", "mood", "sleep", "cramps", "exercise", "notes"]; // order of symptom accordions
 
 export default function LogSymptomsScreen({ navigation, route }) {
   const initialPrefs = ["ovulation", "notes"];
@@ -144,7 +144,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
     ovulation: {
       state: isOvulating,
       setState: setIsOvulating,
-      }, 
+    },
     notes: {
       state: notesStr,
       setState: setNotes,
@@ -236,7 +236,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
 
         // Only need to recalculateAverages if flow was changed
         if (flowOnOffModeChanged(submitSymp.flow, stored.flow)) {
-          await calculateAverages();
+          await calculateAverages(); // TODO This is throwing an error cause of whoops
         }
       })
       .catch((e) => {
@@ -321,7 +321,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
             >
               <CloseIcon fill={"#000000"} />
             </TouchableOpacity>
-            
+
             {/* SWITCH AND DISPLAY DATE */}
             <View style={styles.switchDate}>
               {isNewDayValid(false, selectedDate) ? (
