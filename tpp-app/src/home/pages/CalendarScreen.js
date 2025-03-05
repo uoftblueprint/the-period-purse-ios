@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ImageBackground } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CalendarList } from "react-native-calendars";
 import { DayComponent } from "../components/DayComponent";
 import Selector, { SelectedIcon } from "../components/Selector";
@@ -17,7 +18,7 @@ import { GETTutorial } from "../../services/TutorialService";
 import LegendButton from "../../../assets/icons/legend_icon.svg";
 import { addDays } from 'date-fns';
 import CycleService from '../../services/cycle/CycleService';
-import { calculateAverageOvulationLength } from '../../services/CalculationService';
+import Keys from "../../../src/services/utils/keys";
 
 export let scrollDate = getISODate(new Date());
 
@@ -228,7 +229,10 @@ export default function CalendarScreen({ route, navigation }) {
       const daysTillOvulation = await CycleService.GETPredictedDaysTillOvulation();
       const today = new Date();
       const markedDates = {};
-      const ovulationLength = calculateAverageOvulationLength() || 5;
+      
+      const storedVal = await AsyncStorage.getItem(Keys.AVERAGE_OVULATION_PHASE_LENGTH);
+      const ovulationLength = storedVal ? JSON.parse(storedVal) : 5;
+
 
       // Mark current ovulation if we're in it
       if (daysTillOvulation <= 0 && daysTillOvulation >= -ovulationLength) {
