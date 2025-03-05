@@ -229,22 +229,19 @@ export default function LogSymptomsScreen({ navigation, route }) {
           // submitSymp may be null, in that case pass back blank Symptoms object
           symptoms: submitSymp,
         };
-
+        // navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, { inputData });
         // navigation.goBack(isDirty);
+        route.params.onReturn?.(inputData);
+        navigation.goBack();
+
         // Only need to recalculateAverages if flow was changed
-        // if (flowOnOffModeChanged(submitSymp.flow, stored.flow)) {
-        //   await calculateAverages();
-        // }
-        navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, { inputData: inputData });
+        if (flowOnOffModeChanged(submitSymp.flow, stored.flow)) {
+          await calculateAverages(); // TODO This is throwing an error cause of whoops
+        }
       })
       .catch((e) => {
         let errorInfo = submitError(typeof e === "string" ? e : JSON.stringify(e));
-        alertPopup(errorInfo)
-          .then(() => {
-            // YES close screen
-            navigation.goBack();
-          })
-          .catch(); // CANCEL do nothing and close alert
+        alertPopup(errorInfo);
         setSubmitting(false);
       });
   }, [submitting]);
@@ -319,6 +316,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
             >
               <CloseIcon fill={"#000000"} />
             </TouchableOpacity>
+
             {/* SWITCH AND DISPLAY DATE */}
             <View style={styles.switchDate}>
               {isNewDayValid(false, selectedDate) ? (

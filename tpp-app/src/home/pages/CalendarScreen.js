@@ -21,7 +21,7 @@ import { calculateAverageOvulationLength } from '../../services/CalculationServi
 
 export let scrollDate = getISODate(new Date());
 
-export const Calendar = ({ navigation, marked, setYearInView, selectedView, route, ovulationDates }) => {
+export const Calendar = ({ navigation, marked, setYearInView, selectedView, route, ovulationDates, setMarked }) => {
   const jumpDate = route.params?.newDate ? route.params.newDate : getISODate(new Date());
   let joinedDate = "";
   GETJoinedDate().then((res) => {
@@ -53,7 +53,7 @@ export const Calendar = ({ navigation, marked, setYearInView, selectedView, rout
       // Enable or disable vertical scroll indicator. Default = false
       showScrollIndicator={true}
       dayComponent={({ date, state, marking }) => (
-        <DayComponent date={date} state={state} marking={marking} navigation={navigation} selectedView={selectedView} />
+        <DayComponent date={date} state={state} marking={marking} navigation={navigation} selectedView={selectedView} setMarked={setMarked}/>
       )}
       theme={{
         calendarBackground: "transparent",
@@ -320,6 +320,7 @@ export default function CalendarScreen({ route, navigation }) {
                 setYearInView={setYearInView}
                 selectedView={selectedView}
                 route={route}
+                setMarked={setMarked}
                 ovulationDates={ovulationDates}
               />
             </View>
