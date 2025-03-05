@@ -145,6 +145,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
       state: isOvulating,
       setState: setIsOvulating,
     },
+    },
     notes: {
       state: notesStr,
       setState: setNotes,
@@ -355,7 +356,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
                     type={symptom}
                     isLastChild={i === symptoms.length - 1 ? true : false}
                     value={form[symptom].state} // pass in parent state
-                    setState={form[symptom].setState.bind(form)} // pass in parent setState function
+                    setState={form[symptom].setState} // pass in parent setState function
                   />
                 );
               }
