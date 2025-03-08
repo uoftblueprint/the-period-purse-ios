@@ -57,6 +57,8 @@ export const calculateAverageCycleLength = (completeHistory) => {
  */
 export const calculateAverages = async () =>
   new Promise(async (resolve, reject) => {
+    console.log("calculateAverages");
+
     // Get all Years
     GETStoredYears()
       .then((years) => {
