@@ -6,7 +6,7 @@ import { DayComponent } from "../components/DayComponent";
 import Selector, { SelectedIcon } from "../components/Selector";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { GETYearData } from "../../services/CalendarService";
-import { VIEWS } from "../../services/utils/constants";
+import { TRACK_SYMPTOMS, VIEWS } from "../../services/utils/constants";
 import { getISODate, getMonthsDiff, initializeEmptyYear } from "../../services/utils/helpers";
 import { useFocusEffect } from "@react-navigation/native";
 import { GETJoinedDate } from "../../services/OnboardingService";
@@ -19,6 +19,7 @@ import LegendButton from "../../../assets/icons/legend_icon.svg";
 import { addDays } from 'date-fns';
 import CycleService from '../../services/cycle/CycleService';
 import Keys from "../../../src/services/utils/keys";
+import { GETAllTrackingPreferences } from "../../services/SettingsService";
 
 export let scrollDate = getISODate(new Date());
 
@@ -109,6 +110,12 @@ export default function CalendarScreen({ route, navigation }) {
   const [loaded, setLoaded] = useState(false);
   const [ovulationDates, setOvulationDates] = useState({});
 
+  useFocusEffect(
+    useCallback(() => {
+      getOvulationDates();
+    }, [])
+  );
+    
   useEffect(() => {
     async function fetchYearData() {
       let promises = [];
@@ -219,9 +226,22 @@ export default function CalendarScreen({ route, navigation }) {
   );
 
   const getOvulationDates = async () => {
+    // This function will get the next ovulation dates and mark them on the calendar
     try {
       // Only get ovulation dates if ovulation view is selected
-      if (selectedView !== VIEWS.Ovulation) {
+      // or if flow view is selected (Added by ios ticket tppdev-70)
+      // Manipulate this if statement to include other views
+      const preferences = await GETAllTrackingPreferences();
+      // preferences is an array of [key, value] pairs from AsyncStorage
+      const ovulationPref = preferences.find(
+        ([key]) => key === TRACK_SYMPTOMS.OVULATION
+      );
+      // If the ovulation preference exists, parse its value, otherwise return false.
+      ovulationPref ? JSON.parse(ovulationPref[1]) : false;
+      console.log('ovulationPref:', ovulationPref[1]);
+
+      // If ovulation is not being tracked, clear ovulation dates
+      if (ovulationPref[1] === "false") {
         setOvulationDates({});
         return;
       }
@@ -235,7 +255,7 @@ export default function CalendarScreen({ route, navigation }) {
 
 
       // Mark current ovulation if we're in it
-      if (daysTillOvulation <= 0 && daysTillOvulation >= -ovulationLength) {
+      if (daysTillOvulation <= 0 && daysTillOvulation >= - ovulationLength) {
         const currentOvulationStart = addDays(today, daysTillOvulation);
         for (let i = 0; i < ovulationLength + daysTillOvulation; i++) {
           const dateToMark = addDays(currentOvulationStart, i);
