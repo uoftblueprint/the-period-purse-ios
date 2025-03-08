@@ -110,12 +110,6 @@ export default function CalendarScreen({ route, navigation }) {
   const [loaded, setLoaded] = useState(false);
   const [ovulationDates, setOvulationDates] = useState({});
 
-  useFocusEffect(
-    useCallback(() => {
-      getOvulationDates();
-    }, [])
-  );
-    
   useEffect(() => {
     async function fetchYearData() {
       let promises = [];
@@ -166,7 +160,14 @@ export default function CalendarScreen({ route, navigation }) {
 
     fetchYearData();
   }, [yearInView]);
-
+  
+  // Ensure that ovulation dates are marked on the calendar at each render. 
+  // This is necessary because period screen also marks ovulation dates. 
+  useFocusEffect(
+    useCallback(() => {
+      getOvulationDates();
+    }, [])
+  );
   useEffect(() => {
     async function markOvulation() {
       // 1. get days until ovulation
