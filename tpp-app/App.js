@@ -17,6 +17,12 @@ import {
   GETRemindLogSymptomsFreq,
   GETRemindLogSymptomsTime,
   GETRemindLogSymptoms,
+  POSTRemindOvulation,
+  POSTRemindOvulationFreq,
+  POSTRemindOvulationTime,
+  GETRemindOvulationFreq,
+  GETRemindOvulationTime,
+  GETRemindOvulation,
 } from "./src/services/SettingsService";
 import SettingsIcon from "./assets/icons/settings_icon.svg";
 import InfoIcon from "./assets/icons/info_icon.svg";
@@ -180,6 +186,15 @@ function App() {
         }
         if ((await GETRemindLogSymptoms()) === null) {
           await POSTRemindLogSymptoms(true);
+        }
+        if ((await GETRemindOvulationFreq()) === null) {
+          await POSTRemindLogSymptomsFreq("Every day");
+        }
+        if ((await GETRemindOvulationTime()) == null) {
+          await POSTRemindOvulationTime("10:00 AM");
+        }
+        if ((await GETRemindOvulation()) === null) {
+          await POSTRemindOvulation(true);
         }
       },
       (data) => {

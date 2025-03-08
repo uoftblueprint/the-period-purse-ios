@@ -49,7 +49,7 @@ export const TRACK_SYMPTOMS = {
 
 export const OVULATION = {
   OVULATING: "Ovulating",
-}
+};
 
 export const FILTER_COLOURS = {
   FLOW: {
@@ -80,6 +80,7 @@ export const FILTER_COLOURS = {
   },
   OVULATION: {
     OVULATING: "#69DAC6",
+    PREDICTED_OVULATION: "#55AD9EFF",
   },
   DISABLED: "#EEEEEE",
   NOFILTER: "#FFFFFF",
@@ -112,9 +113,9 @@ export const FILTER_TEXT_COLOURS = {
     LIGHT: "#FFF",
     LITTLE: "#000",
   },
-  OVULATION:{
+  OVULATION: {
     OVULATING: "#000",
-  }, 
+  },
   DISABLED: "#AAAAAA",
   NOFILTER: "#000000",
 };
@@ -138,8 +139,7 @@ export const KEYS = {
   SELECTED_VIEW: "selectedView",
   JOINED_DATE: "joinedDate",
   AVERAGE_OVULATION_PHASE_LENGTH: "averageOvulationPhaseLength",
-  AVERAGE_TIME_BETWEEN_PERIOD_AND_OVULATION:
-    "averageTimeBetweenPeriodAndOvulation",
+  AVERAGE_TIME_BETWEEN_PERIOD_AND_OVULATION: "averageTimeBetweenPeriodAndOvulation",
 };
 
 export const FACT_NUM = {
@@ -153,6 +153,9 @@ export const REMINDERS = {
   LOG_PERIOD_TIME: "remindLogPeriodTime",
   LOG_SYMPTOMS_DAYS: "remindLogSymptomsDays",
   LOG_SYMPTOMS_TIME: "remindLogSymptomsTime",
+  REMIND_OVULATION: "remindOvulation",
+  OVULATION_DAYS: "remindOvulationDays",
+  OVULATION_TIME: "remindOvulationTime",
 };
 
 export const LOG_PERIOD_FREQ = {

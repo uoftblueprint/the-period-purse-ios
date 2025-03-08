@@ -44,7 +44,7 @@ const DateArrow = ({ onPress, isRight }) => {
   );
 };
 
-const symptoms = ["flow", "ovulation", "mood", "sleep", "cramps", "exercise",  "notes"]; // order of symptom accordions
+const symptoms = ["flow", "ovulation", "mood", "sleep", "cramps", "exercise", "notes"]; // order of symptom accordions
 
 export default function LogSymptomsScreen({ navigation, route }) {
   const initialPrefs = ["ovulation", "notes"];
@@ -144,7 +144,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
     ovulation: {
       state: isOvulating,
       setState: setIsOvulating,
-      }, 
+    },
     notes: {
       state: notesStr,
       setState: setNotes,
@@ -229,22 +229,19 @@ export default function LogSymptomsScreen({ navigation, route }) {
           // submitSymp may be null, in that case pass back blank Symptoms object
           symptoms: submitSymp,
         };
-        navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, { inputData: inputData });
+        // navigation.navigate(CALENDAR_STACK_SCREENS.CALENDAR_PAGE, { inputData });
         // navigation.goBack(isDirty);
+        route.params.onReturn?.(inputData);
+        navigation.goBack();
 
         // Only need to recalculateAverages if flow was changed
         if (flowOnOffModeChanged(submitSymp.flow, stored.flow)) {
-          await calculateAverages();
+          await calculateAverages(); // TODO This is throwing an error cause of whoops
         }
       })
       .catch((e) => {
         let errorInfo = submitError(typeof e === "string" ? e : JSON.stringify(e));
-        alertPopup(errorInfo)
-          .then(() => {
-            // YES close screen
-            navigation.goBack();
-          })
-          .catch(); // CANCEL do nothing and close alert
+        alertPopup(errorInfo);
         setSubmitting(false);
       });
   }, [submitting]);
@@ -319,7 +316,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
             >
               <CloseIcon fill={"#000000"} />
             </TouchableOpacity>
-            
+
             {/* SWITCH AND DISPLAY DATE */}
             <View style={styles.switchDate}>
               {isNewDayValid(false, selectedDate) ? (
@@ -353,7 +350,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
                     type={symptom}
                     isLastChild={i === symptoms.length - 1 ? true : false}
                     value={form[symptom].state} // pass in parent state
-                    setState={form[symptom].setState.bind(form)} // pass in parent setState function
+                    setState={form[symptom].setState} // pass in parent setState function
                   />
                 );
               }

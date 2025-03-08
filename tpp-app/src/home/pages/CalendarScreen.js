@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ImageBackground } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CalendarList } from "react-native-calendars";
 import { DayComponent } from "../components/DayComponent";
 import Selector, { SelectedIcon } from "../components/Selector";
@@ -15,10 +16,13 @@ import OnboardingBackground from "../../../assets/SplashScreenBackground/colourw
 import LoadingVisual from "../components/LoadingVisual";
 import { GETTutorial } from "../../services/TutorialService";
 import LegendButton from "../../../assets/icons/legend_icon.svg";
+import { addDays } from 'date-fns';
+import CycleService from '../../services/cycle/CycleService';
+import Keys from "../../../src/services/utils/keys";
 
 export let scrollDate = getISODate(new Date());
 
-export const Calendar = ({ navigation, marked, setYearInView, selectedView, route }) => {
+export const Calendar = ({ navigation, marked, setYearInView, selectedView, route, ovulationDates, setMarked }) => {
   const jumpDate = route.params?.newDate ? route.params.newDate : getISODate(new Date());
   let joinedDate = "";
   GETJoinedDate().then((res) => {
@@ -32,7 +36,7 @@ export const Calendar = ({ navigation, marked, setYearInView, selectedView, rout
       // Max amount of months allowed to scroll to the past. Default = 50
       pastScrollRange={pastScroll}
       // Max amount of months allowed to scroll to the future. Default = 50
-      futureScrollRange={jumpDate.slice(8, 10) === "01" ? 1 : 0}
+      futureScrollRange={2}
       // Enable or disable scrolling of calendar list
       scrollEnabled={true}
       // Check which months are currently in view
@@ -50,7 +54,7 @@ export const Calendar = ({ navigation, marked, setYearInView, selectedView, rout
       // Enable or disable vertical scroll indicator. Default = false
       showScrollIndicator={true}
       dayComponent={({ date, state, marking }) => (
-        <DayComponent date={date} state={state} marking={marking} navigation={navigation} selectedView={selectedView} />
+        <DayComponent date={date} state={state} marking={marking} navigation={navigation} selectedView={selectedView} setMarked={setMarked}/>
       )}
       theme={{
         calendarBackground: "transparent",
@@ -85,7 +89,11 @@ export const Calendar = ({ navigation, marked, setYearInView, selectedView, rout
           },
         },
       }}
-      markedDates={marked}
+      markingType={'period'}
+      markedDates={{
+        ...marked,
+        ...ovulationDates
+      }}
     />
   );
 };
@@ -99,6 +107,7 @@ export default function CalendarScreen({ route, navigation }) {
   const [cachedYears, setCachedYears] = useState({});
   const [marked, setMarked] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [ovulationDates, setOvulationDates] = useState({});
 
   useEffect(() => {
     async function fetchYearData() {
@@ -151,6 +160,26 @@ export default function CalendarScreen({ route, navigation }) {
     fetchYearData();
   }, [yearInView]);
 
+  useEffect(() => {
+    async function markOvulation() {
+      // 1. get days until ovulation
+      const daysUntilOvulation = await CycleService.GETPredictedDaysTillOvulation();
+      if (daysUntilOvulation <= 0) return;
+      // 2. build your 5-day ovulation window
+      let ovulationDates = [];
+      for (let i = 0; i < 5; i++) {
+        let date = new Date();
+        date.setDate(date.getDate() + (daysUntilOvulation + i));
+        ovulationDates.push({
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate(),
+        });
+      }
+    }
+    markOvulation();
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       // set newly marked calendar dates with changed symptoms
@@ -188,6 +217,78 @@ export default function CalendarScreen({ route, navigation }) {
   ) : (
     <Icon name="keyboard-arrow-down" size={24} />
   );
+
+  const getOvulationDates = async () => {
+    try {
+      // Only get ovulation dates if ovulation view is selected
+      if (selectedView !== VIEWS.Ovulation) {
+        setOvulationDates({});
+        return;
+      }
+
+      const daysTillOvulation = await CycleService.GETPredictedDaysTillOvulation();
+      const today = new Date();
+      const markedDates = {};
+      
+      const storedVal = await AsyncStorage.getItem(Keys.AVERAGE_OVULATION_PHASE_LENGTH);
+      const ovulationLength = storedVal ? JSON.parse(storedVal) : 5;
+
+
+      // Mark current ovulation if we're in it
+      if (daysTillOvulation <= 0 && daysTillOvulation >= -ovulationLength) {
+        const currentOvulationStart = addDays(today, daysTillOvulation);
+        for (let i = 0; i < ovulationLength + daysTillOvulation; i++) {
+          const dateToMark = addDays(currentOvulationStart, i);
+          markedDates[dateToMark.toISOString().split('T')[0]] = {
+            ovulation: true,
+            disabled: true,
+            customStyles: {
+              container: {
+                borderRadius: 0,
+                backgroundColor: '#55ad9e', // ARGB: #0xFF55AD9E
+              },
+              text: {
+                color: 'white',
+                fontWeight: '400'
+              }
+            }
+          };
+        }
+      }
+      
+      // Mark next ovulation window if predicted
+      if (daysTillOvulation > 0) {
+        const nextOvulationDate = addDays(today, daysTillOvulation);
+        
+        for (let i = 0; i < ovulationLength; i++) {
+          const dateToMark = addDays(nextOvulationDate, i);
+          markedDates[dateToMark.toISOString().split('T')[0]] = {
+            ovulation: true,
+            disabled: true,
+            customStyles: {
+              container: {
+                borderRadius: 0,
+                backgroundColor: '#55ad9e', 
+              },
+              text: {
+                color: 'white',
+                fontWeight: '400'
+              }
+            }
+          };
+        }
+      }
+      
+      setOvulationDates(markedDates);
+    } catch (error) {
+      console.error('Error getting ovulation dates:', error);
+    }
+  };
+
+  useEffect(() => {
+    getOvulationDates();
+  }, [selectedView]);
+
   if (loaded) {
     return (
       <ErrorFallback>
@@ -223,6 +324,8 @@ export default function CalendarScreen({ route, navigation }) {
                 setYearInView={setYearInView}
                 selectedView={selectedView}
                 route={route}
+                setMarked={setMarked}
+                ovulationDates={ovulationDates}
               />
             </View>
           </SafeAreaView>
