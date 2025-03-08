@@ -9,6 +9,7 @@ import addDays from "date-fns/addDays";
 import Keys from "../utils/keys";
 import isAfter from "date-fns/isAfter";
 import { errorAlertModal } from "../../error/errorAlertModal";
+import { getSymptomsInYear, getOvulationPhaseLength } from "../utils/helpers";
 
 /**
  * Gets the end date of the final period in the year, which may be in the next year. This is not a prediction
@@ -367,12 +368,18 @@ const CycleService = {
    * @return {Promise} an object that contains intervals of the user's period (start & length) in that year in reverse chronological order
    */
   GETCycleHistoryByYear: async function (year) {
+    console.log("CHECKPOINT 0");
     let periodDays;
     let intervals = [];
 
     let calendar = await getCalendarByYear(year);
+    console.log("CHECKPOINT 1");
+
     let periods = await getPeriodsInYear(year, calendar);
+    console.log("CHECKPOINT 2");
+
     let ovulations = await getSymptomsInYear(year, calendar, "ovulation");
+    console.log("CHECKPOINT 3");
 
     if (periods.length === 0) {
       return intervals;
@@ -395,7 +402,7 @@ const CycleService = {
           }
           periodStart = current;
           isPeriodEnd = true;
-
+          console.log("periodStart", periodStart);
           if (isLastPeriodStart) {
             //handle special case for the last period, since it could possibly span multiple years
             periodStart = periods[i];
@@ -426,7 +433,7 @@ const CycleService = {
         intervals.push({ start: periodStart, periodDays: periodDays });
       }
     } catch (e) {
-      console.log(e);
+      console.log(e.message);
       errorAlertModal();
     }
     return intervals;
@@ -503,16 +510,16 @@ const CycleService = {
     try {
       const today = new Date();
       const lastPeriodStart = await this.GETMostRecentPeriodStartDate();
-      const daysUntilNextPeriod = await this.GETPredictedDaysTillPeriod(); 
-      
+      const daysUntilNextPeriod = await this.GETPredictedDaysTillPeriod();
+
       if (!lastPeriodStart || daysUntilNextPeriod === -1) {
-        console.log('No period data available for ovulation prediction');
+        console.log("No period data available for ovulation prediction");
         return null;
       }
 
       // Default to 14 days after period start if no other data available
       const periodToOvulationDifference = 14;
-      
+
       const predictedOvulationDate = addDays(lastPeriodStart, periodToOvulationDifference);
       const daysUntilOvulation = differenceInDays(predictedOvulationDate, today);
 
@@ -525,11 +532,10 @@ const CycleService = {
 
       return daysUntilOvulation;
     } catch (e) {
-      console.error('Error predicting ovulation:', e);
+      console.error("Error predicting ovulation:", e);
       return null;
     }
   },
 };
 
 export default CycleService;
-

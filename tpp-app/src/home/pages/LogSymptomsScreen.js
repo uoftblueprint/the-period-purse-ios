@@ -236,7 +236,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
 
         // Only need to recalculateAverages if flow was changed
         if (flowOnOffModeChanged(submitSymp.flow, stored.flow)) {
-          await calculateAverages(); // TODO This is throwing an error cause of whoops
+          await calculateAverages();
         }
       })
       .catch((e) => {
