@@ -71,10 +71,10 @@ export default function PeriodLength({ navigation }) {
           </SafeAreaView>
 
           <TwoButtonContainer>
-            {/* <SkipButton
+            <SkipButton
               title="Skip"
               onPress={() => navigation.navigate(STACK_SCREENS.PERIOD_START, { periodLength: null })}
-            /> */}
+            />
             <NextButton
               title="Next"
               onPress={() => {
