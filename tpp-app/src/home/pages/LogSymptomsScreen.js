@@ -47,7 +47,7 @@ const DateArrow = ({ onPress, isRight }) => {
 const symptoms = ["flow", "ovulation", "mood", "sleep", "cramps", "exercise", "notes"]; // order of symptom accordions
 
 export default function LogSymptomsScreen({ navigation, route }) {
-  const initialPrefs = ["notes"];
+  const initialPrefs = ["flow", "notes"];
   const [trackingPrefs, setPrefs] = useState(initialPrefs); // list of symptoms to track, default is always 'notes'
   const [loaded, setLoaded] = useState(false);
 
@@ -62,7 +62,7 @@ export default function LogSymptomsScreen({ navigation, route }) {
         // if tracking that symptom is set to true, append it to trackingPrefs
         if (toTrack) {
           let title = pref[0];
-          let symptom;
+          let symptom = null;
           switch (title) {
             case TRACK_SYMPTOMS.MOOD:
               symptom = "mood";
@@ -79,11 +79,8 @@ export default function LogSymptomsScreen({ navigation, route }) {
             case TRACK_SYMPTOMS.OVULATION:
               symptom = "ovulation";
               break;
-            default:
-              symptom = "flow";
-              break;
           }
-          if (!prefArr.includes(symptom)) prefArr.push(symptom);
+          if (symptom && !prefArr.includes(symptom)) prefArr.push(symptom);
         }
       }
       setPrefs(prefArr);
