@@ -4,17 +4,9 @@ import { Card, Text } from "@rneui/themed";
 import OnboardingBackground from "../../assets/SplashScreenBackground/colourwatercolour.png";
 import { STACK_SCREENS } from "./Confirmation";
 import { BackButton } from "../home/components/BackButtonComponent";
-import {
-  NextButton,
-  SymptomsChoicesButton,
-  SkipButton,
-} from "./components/ButtonComponents";
+import { NextButton, SymptomsChoicesButton, SkipButton } from "./components/ButtonComponents";
 import { BodyText, TitleText } from "./components/TextComponents";
-import {
-  TwoButtonContainer,
-  BackButtonContainer,
-  SymptomsButtonContainer,
-} from "./components/ContainerComponents";
+import { TwoButtonContainer, BackButtonContainer, SymptomsButtonContainer } from "./components/ContainerComponents";
 import { POSTSymptomsToTrack } from "../services/OnboardingService";
 import OvulationIcon from "../../assets/icons/ovulation.svg";
 import MoodIcon from "../../assets/icons/mood.svg";
@@ -75,12 +67,8 @@ export default function SymptomsChoices({ route, navigation }) {
           <BackgroundShape style={{ top: "10%" }} />
           <CalendarIcon width="250" height="250" style={{ bottom: "30%" }} />
           <BarIcon style={{ bottom: "31%" }} />
-          <TitleText style={{ bottom: "30%" }}>
-            What symptoms do you {"\n"} want to track?
-          </TitleText>
-          <BodyText style={{ bottom: "31%" }}>
-            You can change these anytime in your settings. {"\n"}
-          </BodyText>
+          <TitleText style={{ bottom: "30%" }}>What symptoms do you {"\n"} want to track?</TitleText>
+          <BodyText style={{ bottom: "31%" }}>You can change these anytime in your settings. {"\n"}</BodyText>
           <Card containerStyle={[styles.card]}>
             <FlowDeselected style={styles.image} />
             <Text
@@ -91,8 +79,7 @@ export default function SymptomsChoices({ route, navigation }) {
                 fontSize: 14.5,
               }}
             >
-              By default, we'll always track your period flow. Choose up to four
-              other symptoms to track.
+              By default, we'll always track your period flow. Choose up to five other symptoms to track.
             </Text>
           </Card>
         </View>
@@ -105,9 +92,7 @@ export default function SymptomsChoices({ route, navigation }) {
               icon={<MoodIcon style={styles.icon} fill="black" />}
             />
           </SafeAreaView>
-          <SafeAreaView
-            style={[styles.symptoms, { backgroundColor: exercise }]}
-          >
+          <SafeAreaView style={[styles.symptoms, { backgroundColor: exercise }]}>
             <SymptomsChoicesButton
               onPress={handleExercise}
               title="Exercise"
@@ -115,23 +100,13 @@ export default function SymptomsChoices({ route, navigation }) {
             />
           </SafeAreaView>
           <SafeAreaView style={[styles.symptoms, { backgroundColor: cramp }]}>
-            <SymptomsChoicesButton
-              onPress={handleCramp}
-              title="Cramps"
-              icon={<CrampsIcon style={styles.icon} />}
-            />
+            <SymptomsChoicesButton onPress={handleCramp} title="Cramps" icon={<CrampsIcon style={styles.icon} />} />
           </SafeAreaView>
           <SafeAreaView style={[styles.symptoms, { backgroundColor: sleep }]}>
-            <SymptomsChoicesButton
-              onPress={handleSleep}
-              title="Sleep"
-              icon={<SleepIcon style={styles.icon} />}
-            />
+            <SymptomsChoicesButton onPress={handleSleep} title="Sleep" icon={<SleepIcon style={styles.icon} />} />
           </SafeAreaView>
 
-          <SafeAreaView
-            style={[styles.symptoms, { backgroundColor: ovulation }]}
-          >
+          <SafeAreaView style={[styles.symptoms, { backgroundColor: ovulation }]}>
             <SymptomsChoicesButton
               onPress={handleOvulation}
               title="Ovulation"
@@ -149,14 +124,7 @@ export default function SymptomsChoices({ route, navigation }) {
                   periodLength: periodLength,
                   periodStart: periodStart,
                   periodEnd: periodEnd,
-                  trackingPreferences: [
-                    true,
-                    false,
-                    false,
-                    false,
-                    false,
-                    false,
-                  ],
+                  trackingPreferences: [true, false, false, false, false, false],
                 });
               });
             }}
@@ -188,13 +156,7 @@ export default function SymptomsChoices({ route, navigation }) {
                 });
               });
             }}
-            disabled={
-              [mood, sleep, cramp, exercise, ovulation].some(
-                (element) => element == TEAL
-              )
-                ? false
-                : true
-            }
+            disabled={[mood, sleep, cramp, exercise, ovulation].some((element) => element == TEAL) ? false : true}
           />
         </TwoButtonContainer>
       </ImageBackground>
