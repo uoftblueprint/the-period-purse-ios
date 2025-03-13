@@ -20,6 +20,7 @@ import { addDays } from 'date-fns';
 import CycleService from '../../services/cycle/CycleService';
 import Keys from "../../../src/services/utils/keys";
 import { GETAllTrackingPreferences } from "../../services/SettingsService";
+import { Skeleton } from "@rneui/base";
 
 export let scrollDate = getISODate(new Date());
 
@@ -238,16 +239,21 @@ export default function CalendarScreen({ route, navigation }) {
         ([key]) => key === TRACK_SYMPTOMS.OVULATION
       );
       // If the ovulation preference exists, parse its value, otherwise return false.
-      ovulationPref ? JSON.parse(ovulationPref[1]) : false;
-      console.log('ovulationPref:', ovulationPref[1]);
+      console.log('ovulationPref:', ovulationPref[1], 'selectedView:', selectedView);
 
       // If ovulation is not being tracked, clear ovulation dates
-      if (ovulationPref[1] === "false") {
+      if (
+        ! (selectedView === VIEWS.Ovulation ||
+          (selectedView === VIEWS.Flow && ovulationPref[1] === "true")
+        )
+      ) {
+        console.log('not displaying ovulation dates');
         setOvulationDates({});
         return;
       }
 
       const daysTillOvulation = await CycleService.GETPredictedDaysTillOvulation();
+      console.log('daysTillOvulation:', daysTillOvulation);
       const today = new Date();
       const markedDates = {};
       
@@ -279,8 +285,9 @@ export default function CalendarScreen({ route, navigation }) {
       
       // Mark next ovulation window if predicted
       if (daysTillOvulation > 0) {
+        console.log('marking current ovulation');
         const nextOvulationDate = addDays(today, daysTillOvulation);
-        
+        console.log('nextOvulationDate:', nextOvulationDate);
         for (let i = 0; i < ovulationLength; i++) {
           const dateToMark = addDays(nextOvulationDate, i);
           markedDates[dateToMark.toISOString().split('T')[0]] = {
@@ -300,8 +307,9 @@ export default function CalendarScreen({ route, navigation }) {
         }
       }
       
-      setOvulationDates(markedDates);
-    } catch (error) {
+      setOvulationDates((prevDates) => ({ ...prevDates, ...markedDates }));
+    } 
+      catch (error) {
       console.error('Error getting ovulation dates:', error);
     }
   };
