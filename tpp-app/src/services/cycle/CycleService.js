@@ -10,6 +10,7 @@ import Keys from "../utils/keys";
 import isAfter from "date-fns/isAfter";
 import { errorAlertModal } from "../../error/errorAlertModal";
 import { getSymptomsInYear, getOvulationPhaseLength } from "../utils/helpers";
+import { parse } from "date-fns";
 
 /**
  * Gets the end date of the final period in the year, which may be in the next year. This is not a prediction
@@ -456,10 +457,13 @@ const CycleService = {
     }
 
     let avgCycleLength = await this.GETAverageCycleLength(calendar);
-
+    avgCycleLength = parseInt(avgCycleLength);
     let nextPeriodStart = addDays(prevPeriodStart, avgCycleLength);
+    console.log("nextPeriodStart", nextPeriodStart);
+
     if (avgCycleLength && prevPeriodStart) {
       let predictedDaysTillPeriod = differenceInDays(nextPeriodStart, today);
+      console.log("predictedDaysTillPeriod", predictedDaysTillPeriod);
 
       // Set notification if enabled
       // if (await GETRemindLogPeriod()) {
@@ -510,7 +514,9 @@ const CycleService = {
     try {
       const today = new Date();
       const lastPeriodStart = await this.GETMostRecentPeriodStartDate();
+      console.log("lastPeriodStart", lastPeriodStart);
       const daysUntilNextPeriod = await this.GETPredictedDaysTillPeriod();
+      console.log("daysUntilNextPeriod", daysUntilNextPeriod);
 
       if (!lastPeriodStart || daysUntilNextPeriod === -1) {
         console.log("No period data available for ovulation prediction");

@@ -234,12 +234,8 @@ export default function CalendarScreen({ route, navigation }) {
       // If the ovulation preference exists, parse its value, otherwise return false.
       console.log('ovulationPref:', ovulationPref[1], 'selectedView:', selectedView);
 
-      // If ovulation is not being tracked, clear ovulation dates
-      if (
-        ! (selectedView === VIEWS.Ovulation ||
-          (selectedView === VIEWS.Flow && ovulationPref[1] === "true")
-        )
-      ) {
+      // If ovulation is not being tracked, or we are not on flow view, don't display ovulation dates
+      if (!(selectedView === VIEWS.Ovulation ||(selectedView === VIEWS.Flow && ovulationPref[1] === "true"))){
         console.log('not displaying ovulation dates');
         setOvulationDates({});
         return;
@@ -249,7 +245,6 @@ export default function CalendarScreen({ route, navigation }) {
       console.log('daysTillOvulation:', daysTillOvulation);
       const today = new Date();
       const markedDates = {};
-      
       const storedVal = await AsyncStorage.getItem(Keys.AVERAGE_OVULATION_PHASE_LENGTH);
       const ovulationLength = storedVal ? JSON.parse(storedVal) : 5;
 
