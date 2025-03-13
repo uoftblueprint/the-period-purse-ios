@@ -20,7 +20,6 @@ import { addDays } from 'date-fns';
 import CycleService from '../../services/cycle/CycleService';
 import Keys from "../../../src/services/utils/keys";
 import { GETAllTrackingPreferences } from "../../services/SettingsService";
-import { Skeleton } from "@rneui/base";
 
 export let scrollDate = getISODate(new Date());
 
@@ -162,13 +161,7 @@ export default function CalendarScreen({ route, navigation }) {
     fetchYearData();
   }, [yearInView]);
   
-  // Ensure that ovulation dates are marked on the calendar at each render. 
-  // This is necessary because period screen also marks ovulation dates. 
-  useFocusEffect(
-    useCallback(() => {
-      getOvulationDates();
-    }, [])
-  );
+
   useEffect(() => {
     async function markOvulation() {
       // 1. get days until ovulation
@@ -285,9 +278,7 @@ export default function CalendarScreen({ route, navigation }) {
       
       // Mark next ovulation window if predicted
       if (daysTillOvulation > 0) {
-        console.log('marking current ovulation');
         const nextOvulationDate = addDays(today, daysTillOvulation);
-        console.log('nextOvulationDate:', nextOvulationDate);
         for (let i = 0; i < ovulationLength; i++) {
           const dateToMark = addDays(nextOvulationDate, i);
           markedDates[dateToMark.toISOString().split('T')[0]] = {
@@ -307,9 +298,8 @@ export default function CalendarScreen({ route, navigation }) {
         }
       }
       
-      setOvulationDates((prevDates) => ({ ...prevDates, ...markedDates }));
-    } 
-      catch (error) {
+      setOvulationDates(markedDates);
+      } catch (error) {
       console.error('Error getting ovulation dates:', error);
     }
   };
@@ -318,6 +308,13 @@ export default function CalendarScreen({ route, navigation }) {
     getOvulationDates();
   }, [selectedView]);
 
+  // Ensure that ovulation dates are marked on the calendar at each render. 
+  // This is necessary because period screen also marks ovulation dates. 
+  useFocusEffect(
+    useCallback(() => {
+      getOvulationDates();
+    }, [])
+  );
   if (loaded) {
     return (
       <ErrorFallback>
