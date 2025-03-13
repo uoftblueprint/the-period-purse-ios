@@ -161,27 +161,6 @@ export default function CalendarScreen({ route, navigation }) {
     fetchYearData();
   }, [yearInView]);
   
-
-  useEffect(() => {
-    async function markOvulation() {
-      // 1. get days until ovulation
-      const daysUntilOvulation = await CycleService.GETPredictedDaysTillOvulation();
-      if (daysUntilOvulation <= 0) return;
-      // 2. build your 5-day ovulation window
-      let ovulationDates = [];
-      for (let i = 0; i < 5; i++) {
-        let date = new Date();
-        date.setDate(date.getDate() + (daysUntilOvulation + i));
-        ovulationDates.push({
-          year: date.getFullYear(),
-          month: date.getMonth() + 1,
-          day: date.getDate(),
-        });
-      }
-    }
-    markOvulation();
-  }, []);
-
   useFocusEffect(
     useCallback(() => {
       // set newly marked calendar dates with changed symptoms
@@ -234,19 +213,20 @@ export default function CalendarScreen({ route, navigation }) {
       // If the ovulation preference exists, parse its value, otherwise return false.
       console.log('ovulationPref:', ovulationPref[1], 'selectedView:', selectedView);
 
-      // If ovulation is not being tracked, or we are not on flow view, don't display ovulation dates
-      if (!(selectedView === VIEWS.Ovulation ||(selectedView === VIEWS.Flow && ovulationPref[1] === "true"))){
+      // If ovulation is not being tracked, clear ovulation dates
+      if (!(selectedView === VIEWS.Ovulation ||(selectedView === VIEWS.Flow && ovulationPref[1] === "true"))) {
         console.log('not displaying ovulation dates');
         setOvulationDates({});
         return;
       }
-
       const daysTillOvulation = await CycleService.GETPredictedDaysTillOvulation();
       console.log('daysTillOvulation:', daysTillOvulation);
       const today = new Date();
       const markedDates = {};
       const storedVal = await AsyncStorage.getItem(Keys.AVERAGE_OVULATION_PHASE_LENGTH);
-      const ovulationLength = storedVal ? JSON.parse(storedVal) : 5;
+      console.log('storedVal:', storedVal);
+      const ovulationLength = storedVal === 0 ? parseInt(storedVal):5;
+      console.log('ovulationLength:', ovulationLength);
 
 
       // Mark current ovulation if we're in it

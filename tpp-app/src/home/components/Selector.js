@@ -87,7 +87,7 @@ const Selector = (props) => {
       view: VIEWS.Flow,
       selected: flowSelected,
       internalIcon: FlowIcon,
-      visible: trackedViews[VIEWS.Flow],
+      visible: trackedViews[VIEWS.Flow, VIEWS.Ovulation],
     },
     {
       view: VIEWS.Mood,
