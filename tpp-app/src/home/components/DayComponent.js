@@ -37,7 +37,7 @@ import {
   ExerciseYogaIcon,
 } from "../../services/utils/calendaricons";
 import { OvulatingIcon } from "../../services/utils/calendaricons";
-import { VIEWS } from "../../services/utils/constants";
+import { VIEWS, FLOW_LEVEL} from "../../services/utils/constants";
 import { FILTER_COLOURS, FILTER_TEXT_COLOURS } from "../../services/utils/constants";
 import { CALENDAR_STACK_SCREENS } from "../CalendarNavigator";
 import { Filter } from "react-native-svg";
@@ -49,18 +49,17 @@ export const DayComponent = ({ date, state, marking, selectedView, navigation, s
   let iconName = "view";
   let renderedIcon;
   let isDisabled = false;
-
-  // Check if this is an ovulation date
-  const isOvulationDate = marking && marking.ovulation;
+  // Check for both predicted and manually logged ovulation
+  const isPredictedOvulation = marking && marking.ovulation;
   
-  if (isOvulationDate) {
+  if (isPredictedOvulation) {
     // Set ovulation date styling
     bgColor = FILTER_COLOURS.OVULATION.OVULATING; // Teal color
     textColor = 'white';
     isDisabled = true;  // Make it non-interactive
   } else if (marking) {
     // Handle predicted ovulation dates
-    if (marking.period) {
+    if (marking.ovulation) {
       bgColor = FILTER_COLOURS.OVULATION.PREDICTED_OVULATION;
       textColor = FILTER_TEXT_COLOURS.OVULATION.OVULATING;
     } else {
@@ -116,6 +115,21 @@ export const DayComponent = ({ date, state, marking, selectedView, navigation, s
       } else {
         bgColor = FILTER_COLOURS.NOFILTER;
         textColor = FILTER_TEXT_COLOURS.NOFILTER;
+        
+        // Only show the ovulation icon if:
+        // 1. We're in ovulation view AND
+        // 2. This date is actually marked as ovulation (predicted or logged)
+        const isPredictedOvulation = marking && marking.ovulation;
+        const isLoggedOvulation = marking && marking.symptoms && marking.symptoms.ovulation;
+        
+        if (isLoggedOvulation && selectedView === VIEWS.Flow) {
+          renderedIcon = createElement(OvulatingIcon, {
+            style: styles.dayIcon,
+            width: ICON_SIZE.width,
+            height: ICON_SIZE.height,
+          });
+          bgColor = FILTER_COLOURS.OVULATION.OVULATING;
+        }
       }
     }
   }
