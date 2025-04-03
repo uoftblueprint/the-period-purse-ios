@@ -54,10 +54,7 @@ export const TabBarMiddleButton = ({ style, inOverlay, customOnPress }) => {
         } else {
           calendarShowing && !overlayVisible
             ? navigation.navigate("MiddleButton", {
-                screen: CALENDAR_STACK_SCREENS.CYCLE_CALENDAR_TABS,
-                params: {
                   screen: CALENDAR_STACK_SCREENS.SELECT_LOG_OPTION,
-                },
               })
             : navigation.navigate("MiddleButton", {
                 screen: CALENDAR_STACK_SCREENS.CYCLE_CALENDAR_TABS,
